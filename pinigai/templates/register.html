@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Registracija</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="form-group formos">
+      <label for="{{ form.vardas.id_for_label }}">Vardas:</label>
+      {{ form.vardas }}
+      {{ form.vardas.errors }}
+    </div>
+    <div class="form-group formos">
+      <label for="{{ form.username.id_for_label }}">Vartotojo vardas:</label>
+      {{ form.username }}
+      {{ form.username.errors }}
+    </div>
+    <div class="form-group formos">
+      <label for="{{ form.pareigos.id_for_label }}">Pareigos:</label>
+      {{ form.pareigos }}
+      {{ form.pareigos.errors }}
+    </div>
+    <div class="form-group formos">
+      <label for="{{ form.email.id_for_label }}">El-Paštas:</label>
+      {{ form.email }}
+      {{ form.email.errors }}
+    </div>
+    <div class="form-group formos">
+      <label for="{{ form.password1.id_for_label }}">Slaptažodis:</label>
+      {{ form.password1 }}
+      {{ form.password1.errors }}
+    </div>
+    <div class="form-group formos">
+      <label for="{{ form.password2.id_for_label }}">Pakartokite slaptažodį:</label>
+      {{ form.password2 }}
+      {{ form.password2.errors }}
+    </div>
+    <button class="btn btn-outline-info float-left button"  type="submit">Registruotis</button>
+  </form>
+{% endblock %}
