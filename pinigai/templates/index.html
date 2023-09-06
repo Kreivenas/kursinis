@@ -7,10 +7,10 @@
         <p>Sveiki atvykę į mano puslapį! Tai yra Django ir HTML pavyzdys.</p>
         <!-- Registracijos forma -->
         <h2>Buhalterija</h2>
-        <!-- <form method="post" action="{% url 'register' %}">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit">Register</button>
-        </form> -->
+        {% if user.is_authenticated %}
+        <a href="{% url 'budget' %}">Eiti į biudžeto puslapį</a>
+        {% else %}
+        <a href="{% url 'login' %}">Eiti į biudžeto puslapį tik prisijungus</a>
+        {% endif %}
     </div>
     {% endblock content%}
