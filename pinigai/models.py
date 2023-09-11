@@ -8,18 +8,31 @@ from django.conf import settings
 class CustomUserManager(UserManager):
     pass
 
+class Family(models.Model):
+    name = models.CharField(max_length=255, unique=True)
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='families')
+
+    def __str__(self):
+        return self.name
+
+
 class CustomUser(AbstractUser):
     username = models.CharField(max_length=255, unique=True)
     vardas = models.CharField(max_length=255)
     pareigos = models.CharField(max_length=100)
-    email = models.EmailField(unique=False) 
+    email = models.EmailField(unique=False)
+    family = models.ForeignKey(Family, on_delete=models.SET_NULL, null=True, blank=True)  # Šis laukas rodo į šeimą, kuriai vartotojas priklauso.
 
     USERNAME_FIELD = 'username'
     REQUIRED_FIELDS = ['vardas', 'email']  
     objects = CustomUserManager()
 
-    class Meta:
-        swappable = 'AUTH_USER_MODEL'
+    def __str__(self):
+        return self.username
+
+class Meta:
+    swappable = 'AUTH_USER_MODEL'
+
     
 
 
@@ -51,6 +64,7 @@ class SharedBudget(models.Model):
 
 class Income(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    family = models.ForeignKey(Family, on_delete=models.SET_NULL, null=True, blank=True)  # Šis laukas rodo į šeimą, kuriai priklauso pajama.
     description = models.CharField(max_length=255)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
@@ -61,6 +75,7 @@ class Income(models.Model):
 
 class Expense(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    family = models.ForeignKey(Family, on_delete=models.SET_NULL, null=True, blank=True)  # Šis laukas rodo į šeimą, kuriai priklauso pajama.    
     description = models.CharField(max_length=255)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()

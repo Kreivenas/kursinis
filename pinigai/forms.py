@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser, Profile
+from .models import CustomUser, Profile, Family
 from django import forms
 from django.contrib.auth.models import User
 
@@ -40,3 +40,9 @@ class expenseForm(forms.Form):
     amount = forms.DecimalField(max_digits=10, decimal_places=2)
     date = forms.DateField()
    
+class FamilyCreationForm(forms.ModelForm):
+    description = forms.CharField(max_length=255)
+    class Meta:
+        model = Family
+        fields = ['name', 'members' ]  # Pridėkite laukus pagal poreikį.
+

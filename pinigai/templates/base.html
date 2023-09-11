@@ -16,6 +16,7 @@
             <a class="button" href="{% url 'index' %}" class="active">Pradinis</a>
             {% if user.is_authenticated %}
             <a class="button" href="{% url 'profile' %}">profilis</a>
+            <a class="button" href="{% url 'create_family_form' %}">Seima</a>
             {{ user.get_username }}
             <a class="button" href="{% url 'logout'%}">Atsijungti</a>
             {% else %}

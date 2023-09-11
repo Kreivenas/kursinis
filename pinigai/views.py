@@ -6,14 +6,13 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from django.db.models import Sum
 from django.shortcuts import redirect
-from .forms import  UserUpdateForm, ProfileUpdateForm, IncomeForm, expenseForm, CustomUserRegistrationForm, UserUpdateForm
+from .forms import FamilyCreationForm, UserUpdateForm, ProfileUpdateForm, IncomeForm, expenseForm, CustomUserRegistrationForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required
 from .models import Profile, CustomUser, SharedBudget, Income, Expense
 from .serializers import PostSerializer
 from rest_framework import generics
 
 def index(request):    
-
     return render(request, 'index.html')
 
 
@@ -68,13 +67,31 @@ class PostList(generics.ListCreateAPIView):
 
 @login_required
 def budget_page(request):
-    shared_budget, created = SharedBudget.objects.get_or_create(pk=1, defaults={'balance': 0})
-    incomes = Income.objects.filter(user=request.user)
-    expenses = Expense.objects.filter(user=request.user)
-    total_income_amount = incomes.aggregate(Sum('amount'))['amount__sum'] or 0
-    total_expense_amount = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+    user_family = request.user.family
+    if user_family:
+        shared_budget, created = SharedBudget.objects.get_or_create(family=user_family, defaults={'balance': 0})
+        incomes = Income.objects.filter(user=request.user, family=user_family)
+        expenses = Expense.objects.filter(user=request.user, family=user_family)
+        total_income_amount = incomes.aggregate(Sum('amount'))['amount__sum'] or 0
+        total_expense_amount = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
 
-    return render(request, 'budget.html', {'shared_budget': shared_budget, 'incomes': incomes, 'expenses': expenses, 'total_income_amount': total_income_amount, 'total_expense_amount': total_expense_amount})
+        return render(request, 'budget.html', {'shared_budget': shared_budget, 'incomes': incomes, 'expenses': expenses, 'total_income_amount': total_income_amount, 'total_expense_amount': total_expense_amount})
+    else:
+        # Vartotojas nepriklauso jokiai šeimai, tai galite nukreipti jį į šeimų kūrimo puslapį arba pridėti kitą elgesį pagal poreikį.
+        return render(request, 'no_family.html')
+
+@login_required
+def create_family(request):
+    if request.method == "POST":
+        form = FamilyCreationForm(request.POST)
+        if form.is_valid():
+            family = form.save()
+            family.members.add(request.user)
+            return redirect('budget')
+    else:
+        form = FamilyCreationForm()
+
+    return render(request, 'create_family_form.html', {'form': form})
 
 
 

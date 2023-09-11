@@ -1,8 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Bendras biudžetas</h1>
-  <p>Bendras balansas: {{ shared_budget.balance }}</p>
+
+<h1>Šeimos biudžetas</h1>
+    
+<h2>Šeimos nariai</h2>
+<ul>
+    {% for member in family_members %}
+        <li>{{ member.username }} - {{ member.vardas }}</li>
+    {% endfor %}
+</ul>
+
+
+<h2>Šeimos biudžeto balansas</h2>
+<p>Balansas: {{ family_budget.balance }} EUR</p>
   
   <h2>Mano Pajamos:</h2>
   <ul>
