@@ -4,21 +4,17 @@ from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 from django.urls import reverse
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Sum
 from django.shortcuts import redirect
 from .forms import  UserUpdateForm, ProfileUpdateForm, IncomeForm, expenseForm, CustomUserRegistrationForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required
-from .models import Profile, CustomUser, Budget, Income, Expense
+from .models import Profile, CustomUser, SharedBudget, Income, Expense
 from .serializers import PostSerializer
 from rest_framework import generics
 
 def index(request):    
-    num_visits = request.session.get('num_visits', 1)
-    request.session['num_visits'] = num_visits + 1
-    context = {
-        'num_visits': num_visits,
-    }
-    return render(request, 'index.html', context=context)
+
+    return render(request, 'index.html')
 
 
 def register(request):
@@ -71,11 +67,14 @@ class PostList(generics.ListCreateAPIView):
 
 
 @login_required
-def budget(request): 
-    user_budget, created = Budget.objects.get_or_create(user=request.user, defaults={'balance': 0})
+def budget_page(request):
+    shared_budget, created = SharedBudget.objects.get_or_create(pk=1, defaults={'balance': 0})
     incomes = Income.objects.filter(user=request.user)
     expenses = Expense.objects.filter(user=request.user)
-    return render(request, 'budget.html', {'user_budget': user_budget, 'incomes': incomes, 'expenses': expenses})
+    total_income_amount = incomes.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expense_amount = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+
+    return render(request, 'budget.html', {'shared_budget': shared_budget, 'incomes': incomes, 'expenses': expenses, 'total_income_amount': total_income_amount, 'total_expense_amount': total_expense_amount})
 
 
 
@@ -89,9 +88,12 @@ def add_income(request):
             date = form.cleaned_data['date']
             income = Income(user=request.user, description=description, amount=amount, date=date)
             income.save()
-            budget = Budget.objects.get(user=request.user)
-            budget.balance += income.amount
-            budget.save()
+
+            # Atnaujiname bendrą biudžetą tik tuomet, kai sukuriamas naujas pajamų įrašas
+            shared_budget, created = SharedBudget.objects.get_or_create(pk=1, defaults={'balance': 0})
+            shared_budget.balance += income.amount
+            shared_budget.save()
+
             return redirect('budget')
     else:
         form = IncomeForm()
@@ -110,13 +112,15 @@ def add_expense(request):
             description = form.cleaned_data['description']
             amount = form.cleaned_data['amount']
             date = form.cleaned_data['date']
-
+            
+            # Sukurkite naują išlaidų įrašą
             expense = Expense(user=request.user, description=description, amount=amount, date=date)
             expense.save()
 
-            budget, created = Budget.objects.get_or_create(user=request.user, defaults={'balance': 0})
-            budget.balance -= expense.amount
-            budget.save()
+            # Atnaujinkite bendrą biudžetą tik tuomet, kai sukuriamas naujas išlaidų įrašas
+            shared_budget, created = SharedBudget.objects.get_or_create(pk=1, defaults={'balance': 0})
+            shared_budget.balance -= expense.amount
+            shared_budget.save()
 
             return redirect('budget')
     else:
@@ -126,6 +130,8 @@ def add_expense(request):
         'expense_form': form,
     }
     return render(request, 'add_expense.html', context=context)
+
+
 
 
 

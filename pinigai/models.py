@@ -42,13 +42,11 @@ class Profile(models.Model):
 # Create your models here.
 
 
-class Budget(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+class SharedBudget(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
-
     def __str__(self):
-        return f"{self.user.username}'s Budget"
+        return f"Bendras Biudžetas: {self.balance}"
 
 
 class Income(models.Model):

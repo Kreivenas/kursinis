@@ -2,9 +2,9 @@
 
 {% block content %}
   <h1>Bendras biudžetas</h1>
-  <p>Saldo balansas: {{ user_budget.balance }}</p>
+  <p>Bendras balansas: {{ shared_budget.balance }}</p>
   
-  <h2>Pajamos:</h2>
+  <h2>Mano Pajamos:</h2>
   <ul>
     {% for income in incomes %}
       <li>{{ income.description }} - {{ income.amount }} EUR</li>
@@ -13,7 +13,7 @@
     {% endfor %}
   </ul>
   
-  <h2>Išlaidos:</h2>
+  <h2>Mano Išlaidos:</h2>
   <ul>
     {% for expense in expenses %}
       <li>{{ expense.description }} - {{ expense.amount }} EUR</li>
