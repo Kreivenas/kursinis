@@ -1,41 +1,36 @@
 {% extends "base.html" %}
-
 {% block content %}
-
 <h1>Šeimos biudžetas</h1>
-    
-<h2>Šeimos nariai</h2>
+
+{% block family_message %}{% endblock %}
+
+
+{% if shared_budget %}
+  <h2>Šeimos biudžeto balansas</h2>
+  <p>Balansas: {{ shared_budget.balance }} EUR</p>
+{% else %}
+  <p>Nėra šeimos biudžeto.</p>
+{% endif %}
+
+<h2>Mano Pajamos:</h2>
 <ul>
-    {% for member in family_members %}
-        <li>{{ member.username }} - {{ member.vardas }}</li>
-    {% endfor %}
+  {% for income in incomes %}
+    <li>{{ income.description }} - {{ income.amount }} EUR</li>
+  {% empty %}
+    <li>Nėra įrašytų pajamų.</li>
+  {% endfor %}
 </ul>
 
+<h2>Mano Išlaidos:</h2>
+<ul>
+  {% for expense in expenses %}
+    <li>{{ expense.description }} - {{ expense.amount }} EUR</li>
+  {% empty %}
+    <li>Nėra įrašytų išlaidų.</li>
+  {% endfor %}
+</ul>
 
-<h2>Šeimos biudžeto balansas</h2>
-<p>Balansas: {{ family_budget.balance }} EUR</p>
-  
-  <h2>Mano Pajamos:</h2>
-  <ul>
-    {% for income in incomes %}
-      <li>{{ income.description }} - {{ income.amount }} EUR</li>
-    {% empty %}
-      <li>Nėra įrašytų pajamų.</li>
-    {% endfor %}
-  </ul>
-  
-  <h2>Mano Išlaidos:</h2>
-  <ul>
-    {% for expense in expenses %}
-      <li>{{ expense.description }} - {{ expense.amount }} EUR</li>
-    {% empty %}
-      <li>Nėra įrašytų išlaidų.</li>
-    {% endfor %}
-  </ul>
+<a href="{% url 'add_income' %}" class="btn btn-primary">Pajamos</a>
+<a href="{% url 'add_expense' %}" class="btn btn-primary">Išlaidos</a>
 
-  <a href="{% url 'add_income' %}" class="btn btn-primary">Pajamas</a>
-  
-  <a href="{% url 'add_expense' %}" class="btn btn-primary">Islaidos</a>
-
-  
 {% endblock %}

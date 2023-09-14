@@ -4,32 +4,27 @@ from django.urls import reverse
 from PIL import Image
 from django.conf import settings
 
-# from tinymce.models import HTMLField
 class CustomUserManager(UserManager):
     pass
 
 class Family(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='families')
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='families_as_members', blank=True)
+    user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='families_as_user', blank=True)
+    selected_family = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
-
 class CustomUser(AbstractUser):
-    username = models.CharField(max_length=255, unique=True)
     vardas = models.CharField(max_length=255)
     pareigos = models.CharField(max_length=100)
-    email = models.EmailField(unique=False)
-    family = models.ForeignKey(Family, on_delete=models.SET_NULL, null=True, blank=True)  # Šis laukas rodo į šeimą, kuriai vartotojas priklauso.
-
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = ['vardas', 'email']  
-    objects = CustomUserManager()
+    email = models.EmailField(unique=True)
+    family = models.ForeignKey(Family, on_delete=models.SET_NULL, null=True, blank=True, related_name='family_members')
+    selected_family = models.ForeignKey(Family, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self):
         return self.username
-
 class Meta:
     swappable = 'AUTH_USER_MODEL'
 

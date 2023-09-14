@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'pinigai.apps.PinigaiConfig',
     'crispy_forms',
     'crispy_bootstrap4',    

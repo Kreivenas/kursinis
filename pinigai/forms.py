@@ -4,13 +4,13 @@ from .models import CustomUser, Profile, Family
 from django import forms
 from django.contrib.auth.models import User
 
+
 class CustomUserRegistrationForm(UserCreationForm):
     vardas = forms.CharField(max_length=255)
     pareigos = forms.CharField(max_length=100)
     email = forms.CharField(max_length=50)
     username = forms.CharField(max_length=50)
-
-
+    family = forms.ModelChoiceField(queryset=Family.objects.all())
     class Meta:
         model = CustomUser
         fields = ['vardas', 'pareigos', 'email', 'username', 'password1', 'password2']
@@ -46,3 +46,7 @@ class FamilyCreationForm(forms.ModelForm):
         model = Family
         fields = ['name', 'members' ]  # Pridėkite laukus pagal poreikį.
 
+class FamilySelectionForm(forms.ModelForm):
+    class Meta:
+        model = Family
+        fields = ['selected_family']

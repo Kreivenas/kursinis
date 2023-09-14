@@ -26,6 +26,11 @@
       {{ form.email.errors }}
     </div>
     <div class="form-group formos">
+      <label for="{{ form.family.id_for_label }}">Seima:</label>
+      {{ form.family }}
+      {{ form.family.errors }}
+    </div>
+    <div class="form-group formos">
       <label for="{{ form.password1.id_for_label }}">Slaptažodis:</label>
       {{ form.password1 }}
       {{ form.password1.errors }}

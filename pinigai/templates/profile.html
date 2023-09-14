@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
+
+{% block family_message %}
+  {% if user.profile.family %}
+    <p>Šeima, prie kurios priklausote: {{ user.profile.family }}</p>
+  {% else %}
+    <p>Jūs nepriklauso jokiai šeimai.</p>
+  {% endif %}
+{% endblock %}
+
     <div class="content-section">
         
       <div class="media">
@@ -21,5 +30,6 @@
                 <button class="btn btn-outline-info button" type="submit">Atnaujinti</button>
             </div>
         </form>
+
     </div>
 {% endblock content %}

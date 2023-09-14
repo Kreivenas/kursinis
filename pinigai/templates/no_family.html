@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <h1>Vartotojas nepriklauso jokiai šeimai</h1>
+{% block family_message %}
+  {% if user.family %}
+    <p>Sveiki, jūs priklauso šeimai {{ user.family.name }}.</p>
+  {% else %}
     <p>Atsiprašome, bet atrodo, kad jūs nepriklauso jokiai šeimai. Norėdami naudotis biudžeto funkcijomis, sukurti ar prisijungti prie šeimos.</p>
-    <!-- Čia galite įdėti nuorodą į puslapį, kur galima sukurti ar prisijungti prie šeimos -->
+  {% endif %}
 {% endblock %}
