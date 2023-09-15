@@ -4,9 +4,9 @@
 {% if form.errors %}
     <p style="color: red;">Formos klaida. Patikrinkite pasirinkimą.</p>
 {% endif %}
-<form method="POST">
+<form method="POST" action="{% url 'select_family' %}">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Pasirinkti</button>
+    <button class="button" type="submit">Pasirinkite</button>
 </form>
 {% endblock %}

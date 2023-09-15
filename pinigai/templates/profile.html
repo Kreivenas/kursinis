@@ -4,9 +4,9 @@
 
 {% block family_message %}
   {% if user.profile.family %}
-    <p>Šeima, prie kurios priklausote: {{ user.profile.family }}</p>
+    <p>Šeima, prie kurios priklausote: {{ members.profile.family }}</p>
   {% else %}
-    <p>Jūs nepriklauso jokiai šeimai.</p>
+    <p>Jūs nepriklausote jokiai šeimai.</p>
   {% endif %}
 {% endblock %}
 
@@ -22,7 +22,7 @@
        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Profilio info</legend>
+                <legend class="border-bottom mb-4 button">Profilio info</legend>
                 {{ u_form|crispy }}
                 {{ p_form|crispy }}
             </fieldset>

@@ -4,10 +4,10 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
+    path('login/', views.sign_in, name='login'),
+    path('logout/', views.sign_out, name='logout'),
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
-    path('register/', views.register, name='register'),
+    path('register/', views.sign_up, name='register'),
     path('profile/', views.profile, name='profile'),
     path('budget/', views.budget_page, name='budget'),
     path('add_income/', views.add_income, name='add_income'),
@@ -15,5 +15,4 @@ urlpatterns = [
     path('family_form/', views.create_family, name='create_family_form'),
     path('select_family/', views.select_family, name='select_family'),
     path('family/', views.family_page, name='family_page'),
-    path('api/', views.PostList.as_view())
 ]

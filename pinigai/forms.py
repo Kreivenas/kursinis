@@ -1,20 +1,18 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser, Profile, Family
+from .models import Profile, Family
 from django import forms
 from django.contrib.auth.models import User
 
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=65)
+    password = forms.CharField(max_length=65, widget=forms.PasswordInput)
+    
 
-class CustomUserRegistrationForm(UserCreationForm):
-    vardas = forms.CharField(max_length=255)
-    pareigos = forms.CharField(max_length=100)
-    email = forms.CharField(max_length=50)
-    username = forms.CharField(max_length=50)
-    family = forms.ModelChoiceField(queryset=Family.objects.all())
+class RegisterForm(UserCreationForm):
     class Meta:
-        model = CustomUser
-        fields = ['vardas', 'pareigos', 'email', 'username', 'password1', 'password2']
-
+        model=User
+        fields = ['username','email','password1','password2'] 
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
@@ -44,9 +42,9 @@ class FamilyCreationForm(forms.ModelForm):
     description = forms.CharField(max_length=255)
     class Meta:
         model = Family
-        fields = ['name', 'members' ]  # Pridėkite laukus pagal poreikį.
+        fields = ['name', 'user' ]  # Pridėkite laukus pagal poreikį.
 
 class FamilySelectionForm(forms.ModelForm):
     class Meta:
         model = Family
-        fields = ['selected_family']
+        fields = ['name', 'user']

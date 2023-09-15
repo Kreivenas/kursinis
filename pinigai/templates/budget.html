@@ -2,8 +2,13 @@
 {% block content %}
 <h1>Šeimos biudžetas</h1>
 
-{% block family_message %}{% endblock %}
-
+{% block family_message %}
+  {% if user.family %}
+    <p>Sveiki, jūs priklauso šeimai {{ user.family.name }}.</p>
+  {% else %}
+    <p>Atsiprašome, bet atrodo, kad jūs nepriklauso jokiai šeimai. Norėdami naudotis biudžeto funkcijomis, sukurti ar prisijungti prie šeimos.</p>
+  {% endif %}
+{% endblock %}
 
 {% if shared_budget %}
   <h2>Šeimos biudžeto balansas</h2>
@@ -30,7 +35,7 @@
   {% endfor %}
 </ul>
 
-<a href="{% url 'add_income' %}" class="btn btn-primary">Pajamos</a>
-<a href="{% url 'add_expense' %}" class="btn btn-primary">Išlaidos</a>
+<a class="button" href="{% url 'add_income' %}" class="btn btn-primary">Pajamos</a>
+<a class="button" href="{% url 'add_expense' %}" class="btn btn-primary">Išlaidos</a>
 
 {% endblock %}

@@ -6,32 +6,69 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from django.db.models import Sum
 from django.shortcuts import redirect
-from .forms import FamilyCreationForm, FamilySelectionForm, UserUpdateForm, ProfileUpdateForm, IncomeForm, expenseForm, CustomUserRegistrationForm, UserUpdateForm
+from .forms import LoginForm, RegisterForm, FamilyCreationForm, FamilySelectionForm, UserUpdateForm, ProfileUpdateForm, IncomeForm, expenseForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required
-from .models import Profile, CustomUser, SharedBudget, Income, Expense
-from .serializers import PostSerializer
+from .models import Profile, SharedBudget, Income, Expense
 from rest_framework import generics
+import logging
+from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate, logout
+
+
 
 def index(request):    
     return render(request, 'index.html')
 
 
-def register(request):
-    if request.method == "POST":
-        form = CustomUserRegistrationForm(request.POST)
+def sign_up(request):
+    if request.method == 'GET':
+        form = RegisterForm()
+        return render(request, 'users/register.html', {'form': form})    
+   
+    if request.method == 'POST':
+        form = RegisterForm(request.POST) 
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Vartotojas {username} užregistruotas!')
-            return redirect('login')
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+            messages.success(request, 'You have singed up successfully.')
+            login(request, user)
+            return redirect('profile')
         else:
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f'{field}: {error}')
-    else:
-        form = CustomUserRegistrationForm()
-    return render(request, 'register.html', {'form': form})
+            return render(request, 'users/register.html', {'form': form})
 
+
+def sign_in(request):
+
+    if request.method == 'GET':
+        if request.user.is_authenticated:
+            return redirect('profile')
+
+
+        form = LoginForm()
+        return render(request,'users/login.html', {'form': form})
+    
+    elif request.method == 'POST':
+        form = LoginForm(request.POST)
+        
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request,username=username,password=password)
+            if user:
+                login(request, user)
+                messages.success(request,f'Hi {username.title()}, welcome back!')
+                return redirect('profile')
+        
+        # form is not valid or user is not authenticated
+        messages.error(request,f'Invalid username or password')
+        return render(request,'users/login.html',{'form': form})
+    
+
+def sign_out(request):
+    logout(request)
+    messages.success(request,f'You have been logged out.')
+    return redirect('login')       
 
 @login_required
 def profile(request):
@@ -56,26 +93,25 @@ def profile(request):
 
     return render(request, 'profile.html', context)
 
-class PostList(generics.ListAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = PostSerializer
-
-class PostList(generics.ListCreateAPIView):
-    queryset = CustomUser.objects.all()
-    serializer_class = PostSerializer   
 
 @login_required
 def family_page(request):
     return render(request, 'family.html')
+
+logging.basicConfig(level=logging.INFO)
 
 @login_required
 def select_family(request):
     if request.method == 'POST':
         form = FamilySelectionForm(request.POST)
         if form.is_valid():
-            selected_family = form.cleaned_data['family']
-            selected_family.members.add(request.user)
-            return redirect('profile')  
+            if 'selected_family' in form.cleaned_data:
+                selected_family = form.cleaned_data['selected_family']
+                print("Pasirinkta šeima")
+                selected_family.user.add(request.user)
+                logging.info("Priskirtas vartotojas prie šeimos.")
+                return redirect('budget')
+
     else:
         form = FamilySelectionForm()
     
@@ -87,7 +123,7 @@ def create_family(request):
         form = FamilyCreationForm(request.POST)
         if form.is_valid():
             family = form.save()
-            family.members.add(request.user)
+            family.user.add(request.user)
             return redirect('profile')
     else:
         form = FamilyCreationForm()
@@ -101,7 +137,7 @@ def budget_page(request):
     user_family = request.user.family
     if user_family:
         # Gauti šeimos narius
-        family_members = user_family.members.all()
+        family_user = user_family.user.all()
         print("Šeimos objektas:", user_family)
 
 
@@ -117,7 +153,7 @@ def budget_page(request):
         total_expense_amount = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
 
         return render(request, 'budget.html', {
-            'family_members': family_members,
+            'family_user': family_user,
             'shared_budget': shared_budget,
             'incomes': incomes,
             'expenses': expenses,

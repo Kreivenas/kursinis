@@ -1,39 +1,26 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser, UserManager, User
+from django.contrib.auth.models import User, BaseUserManager
 from django.urls import reverse
 from PIL import Image
 from django.conf import settings
 
-class CustomUserManager(UserManager):
+
+class CustomUserManager(BaseUserManager):
     pass
+
 
 class Family(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='families_as_members', blank=True)
-    user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='families_as_user', blank=True)
-    selected_family = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='families')
 
     def __str__(self):
-        return self.name
-
-class CustomUser(AbstractUser):
-    vardas = models.CharField(max_length=255)
-    pareigos = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    family = models.ForeignKey(Family, on_delete=models.SET_NULL, null=True, blank=True, related_name='family_members')
-    selected_family = models.ForeignKey(Family, on_delete=models.SET_NULL, blank=True, null=True)
-
-    def __str__(self):
-        return self.username
-class Meta:
-    swappable = 'AUTH_USER_MODEL'
-
-    
-
+        return self.name  
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user_families = models.OneToOneField(User, on_delete=models.CASCADE)
+    pareigos = models.CharField(max_length=100)
+    families = models.ManyToManyField(Family, null=True, blank=True, related_name='profiles')
     photo = models.ImageField(
         default="profile_pics/default.jpeg", upload_to="profile_pics")
 

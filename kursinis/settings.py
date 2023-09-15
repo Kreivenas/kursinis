@@ -106,8 +106,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'pinigai.CustomUser'
-
 
 
 # Internationalization
@@ -137,6 +135,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'pinigai/media')
 
 LOGIN_REDIRECT_URL = '/'
+
+LOGIN_URL = 'login'
+
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -175,5 +176,26 @@ TINYMCE_DEFAULT_CONFIG = {
     'menubar': True,
     'statusbar': True,
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'INFO',  # Arba aukštesnis: INFO, WARNING, ERROR, CRITICAL
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['console'],
+            'level': 'INFO',  # Arba aukštesnis: INFO, WARNING, ERROR, CRITICAL
+            'propagate': True,
+        },
+    },
+}
+
+
+
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'

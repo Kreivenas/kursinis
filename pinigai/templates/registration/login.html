@@ -1,36 +1,12 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends 'base.html' %}
 
 {% block content %}
+<form method="POST" novalidate>
+	{% csrf_token %}
+	<h2>Login</h2>
+	{{form.as_p}}
+	<input type="submit" value="Login" />
+	<p>Don't have an account? <a href="{%url 'register' %}">Register</a></p>
+</form>
 
-  {% if form.errors %}
-    <p>Prisijungimo klaida, bandykite dar kartą!</p>
-  {% endif %}
-  
-  {% if next %}
-    {% if user.is_authenticated %}
-      <p>Neturite prieigos prie šios informacijos. Turite prisijungti.</p>
-    {% endif %}
-  {% endif %}
-  
-  <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <table>
-      <tr>
-        <td>Vartotojas: </td>
-        <td>{{ form.username }}</td>
-      </tr>
-      <tr>
-        <td>Slaptažodis: </td>
-        <td>{{ form.password }}</td>
-      </tr>
-    </table>
-    <!-- <input class="formos" type="submit" value="Prisijungti" />
-    <input class="formos" type="hidden" name="next" value="{{ next }}" /> -->
-    <button class="btn btn-outline-info float-left button"  type="login">Prisijungti</button>
-    <p class="formos"><a href="{% url 'password_reset' %}">Pamiršote slaptažodį?</a></p>
-
-  </form>
-
-
-{% endblock %}
+{% endblock content%}
