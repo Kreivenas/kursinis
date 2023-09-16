@@ -1,4 +1,5 @@
 from django.shortcuts import redirect, render, get_object_or_404
+from django.http import Http404
 from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
@@ -121,17 +122,25 @@ def family_page(request):
 
 logging.basicConfig(level=logging.INFO)
 
-@login_required
+
 def select_family(request):
     new_family = None
+
     if request.method == 'POST':
         form = FamilySelectionForm(request.POST)
+
         if form.is_valid():
-            if 'selected_family' in form.cleaned_data:
-                selected_family = form.cleaned_data['selected_family']
-                selected_family.user.add(request.user)  # Pridedame vartotoją prie šios šeimos
-                logging.info("Priskirtas vartotojas prie šeimos.")
-                return redirect('budget')
+            selected_family_id = form.cleaned_data.get('selected_family')
+
+            if selected_family_id:
+                try:
+                    selected_family = Family.objects.get(pk=selected_family_id)
+                    selected_family.user.add(request.user)
+                    logging.info("Priskirtas vartotojas prie šeimos.")
+                    return redirect('budget')
+                except Family.DoesNotExist:
+                    raise Http404("Pasirinkta šeima neegzistuoja.")
+
             elif 'new_family_name' in form.cleaned_data:
                 new_family_name = form.cleaned_data['new_family_name']
                 new_family = create_new_family(request.user, new_family_name)
@@ -140,7 +149,6 @@ def select_family(request):
         form = FamilySelectionForm()
 
     return render(request, 'family_selection_form.html', {'form': form, 'new_family': new_family})
-
 
 
 @login_required

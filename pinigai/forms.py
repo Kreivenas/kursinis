@@ -47,7 +47,15 @@ class FamilyCreationForm(forms.ModelForm):
         model = Family
         fields = ['name', 'user' ]  # Pridėkite laukus pagal poreikį.
 
-class FamilySelectionForm(forms.ModelForm):
-    class Meta:
-        model = Family
-        fields = ['name', 'user']
+class FamilySelectionForm(forms.Form):
+    selected_family = forms.ModelChoiceField(
+        queryset=Family.objects.all(),  # Gauname visus šeimos objektus
+        empty_label="Pasirinkite šeimą",  # Tekstas pradiniam pasirinkimui
+        required=False,  # Nereikalingas privalomas pasirinkimas
+        widget=forms.Select(attrs={'class': 'form-control'}),  # Paprastas pasirinkimo langelis su stiliais
+    )
+    new_family_name = forms.CharField(
+        max_length=255,
+        required=False,  # Nereikalingas privalomas laukas
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Įveskite naujos šeimos pavadinimą'}),  # Teksto laukas su stiliais
+    )

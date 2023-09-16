@@ -1,12 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
+
+
 <h1>Pasirinkite šeimą</h1>
 {% if form.errors %}
     <p style="color: red;">Formos klaida. Patikrinkite pasirinkimą.</p>
 {% endif %}
-<form method="POST" action="{% url 'select_family' %}">
+<form method="POST" class="button" action="{% url 'select_family' %}">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ form.selected_family }}
+    {{ form.new_family_name }}
     <button class="button" type="submit">Pasirinkite</button>
 </form>
+
 {% endblock %}
