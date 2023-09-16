@@ -3,15 +3,11 @@ from django.contrib.auth.models import User     # siuntėjas
 from django.dispatch import receiver            # priėmėjas (dekoratorius)
 from .models import Profile
 
-# Sukūrus vartotoją automatiškai sukuriamas ir profilis.
-@receiver(post_save, sender=User) # jeigu išsaugojamas User objektas, inicijuojama f-ja po dekoratoriumi
-def create_profile(sender, instance, created, **kwargs): # instance yra ką tik sukurtas User objektas.
+@receiver(post_save, sender=User)
+def create_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(user=instance)
-        print('KWARGS: ', kwargs)
+        Profile.objects.create(user_families=instance)
 
-
-# Pakoregavus vartotoją, išsaugomas ir profilis
 @receiver(post_save, sender=User)
 def save_profile(sender, instance, **kwargs):
-    instance.profilis.save()
+    instance.profile.save()

@@ -11,7 +11,7 @@ class CustomUserManager(BaseUserManager):
 
 class Family(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='families')
+    user = models.ManyToManyField(User, related_name='families')  # Pakeičiame ForeignKey į ManyToManyField
 
     def __str__(self):
         return self.name  
@@ -20,12 +20,11 @@ class Family(models.Model):
 class Profile(models.Model):
     user_families = models.OneToOneField(User, on_delete=models.CASCADE)
     pareigos = models.CharField(max_length=100)
-    families = models.ManyToManyField(Family, null=True, blank=True, related_name='profiles')
-    photo = models.ImageField(
-        default="profile_pics/default.jpeg", upload_to="profile_pics")
+    families = models.ManyToManyField('Family', related_name='members', blank=True)
+    photo = models.ImageField(default="profile_pics/default.jpeg", upload_to="profile_pics")
 
     def __str__(self):
-        return f"{self.user.username} profile"
+        return f"{self.user_families.username} profile"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

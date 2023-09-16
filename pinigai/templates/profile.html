@@ -2,13 +2,12 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-{% block family_message %}
-  {% if user.profile.family %}
-    <p>Šeima, prie kurios priklausote: {{ members.profile.family }}</p>
-  {% else %}
-    <p>Jūs nepriklausote jokiai šeimai.</p>
-  {% endif %}
-{% endblock %}
+    <h2>Šeima, prie kurios priklausote:</h2>
+    <ul>
+      {% for family in user_families %}
+        <li>{{ family.name }}</li>
+      {% endfor %}
+    </ul>
 
     <div class="content-section">
         

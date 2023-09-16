@@ -8,7 +8,7 @@ from django.db.models import Sum
 from django.shortcuts import redirect
 from .forms import LoginForm, RegisterForm, FamilyCreationForm, FamilySelectionForm, UserUpdateForm, ProfileUpdateForm, IncomeForm, expenseForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required
-from .models import Profile, SharedBudget, Income, Expense
+from .models import Profile, SharedBudget, Income, Expense, Family
 from rest_framework import generics
 import logging
 from django.contrib.auth.models import User
@@ -19,23 +19,40 @@ from django.contrib.auth import login, authenticate, logout
 def index(request):    
     return render(request, 'index.html')
 
+def create_new_family(user, family_name):
+    # Įsitikinkite, kad jūsų Family modelis turi 'user' (daugiskaitos) atributą, ne 'user'
+    family = Family.objects.create(name=family_name)
+    family.user.add(user)  # Pridėkite vartotoją prie šeimos
+    return family
 
 def sign_up(request):
-    if request.method == 'GET':
-        form = RegisterForm()
-        return render(request, 'users/register.html', {'form': form})    
-   
     if request.method == 'POST':
-        form = RegisterForm(request.POST) 
+        form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.username = user.username.lower()
             user.save()
-            messages.success(request, 'You have singed up successfully.')
+
+            selected_family = form.cleaned_data.get('family_choice')
+            new_family_name = form.cleaned_data.get('new_family_name')
+
+            if selected_family:
+                # Vartotojas pasirinko esamą šeimą
+                selected_family.user.add(user)  # Pridėkite vartotoją prie šeimos
+            elif new_family_name:
+                # Vartotojas sukūrė naują šeimą
+                new_family = create_new_family(user, new_family_name)
+            else:
+                messages.error(request, 'Please select an existing family or create a new one.')
+
+            messages.success(request, 'You have signed up successfully.')
             login(request, user)
             return redirect('profile')
         else:
-            return render(request, 'users/register.html', {'form': form})
+            return render(request, 'register.html', {'form': form})
+    else:
+        form = RegisterForm()
+        return render(request, 'register.html', {'form': form})
 
 
 def sign_in(request):
@@ -46,7 +63,7 @@ def sign_in(request):
 
 
         form = LoginForm()
-        return render(request,'users/login.html', {'form': form})
+        return render(request,'login.html', {'form': form})
     
     elif request.method == 'POST':
         form = LoginForm(request.POST)
@@ -62,7 +79,7 @@ def sign_in(request):
         
         # form is not valid or user is not authenticated
         messages.error(request,f'Invalid username or password')
-        return render(request,'users/login.html',{'form': form})
+        return render(request,'login.html',{'form': form})
     
 
 def sign_out(request):
@@ -72,7 +89,9 @@ def sign_out(request):
 
 @login_required
 def profile(request):
-    profile, created = Profile.objects.get_or_create(user=request.user)
+    profile, created = Profile.objects.get_or_create(user_families=request.user)
+    user_families = profile.families.all()
+
     if request.method == "POST":
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(
@@ -89,9 +108,11 @@ def profile(request):
     context = {
         'u_form': u_form,
         'p_form': p_form,
+        'user_families': user_families  # Pridėjome user_families į kontekstą
     }
 
     return render(request, 'profile.html', context)
+
 
 
 @login_required
@@ -102,44 +123,55 @@ logging.basicConfig(level=logging.INFO)
 
 @login_required
 def select_family(request):
+    new_family = None
     if request.method == 'POST':
         form = FamilySelectionForm(request.POST)
         if form.is_valid():
             if 'selected_family' in form.cleaned_data:
                 selected_family = form.cleaned_data['selected_family']
-                print("Pasirinkta šeima")
-                selected_family.user.add(request.user)
+                selected_family.user.add(request.user)  # Pridedame vartotoją prie šios šeimos
                 logging.info("Priskirtas vartotojas prie šeimos.")
                 return redirect('budget')
+            elif 'new_family_name' in form.cleaned_data:
+                new_family_name = form.cleaned_data['new_family_name']
+                new_family = create_new_family(request.user, new_family_name)
 
     else:
         form = FamilySelectionForm()
-    
-    return render(request, 'family_selection_form.html', {'form': form})
+
+    return render(request, 'family_selection_form.html', {'form': form, 'new_family': new_family})
+
+
 
 @login_required
 def create_family(request):
+    new_family = None  # Sukuriamas new_family kintamasis
     if request.method == "POST":
         form = FamilyCreationForm(request.POST)
         if form.is_valid():
             family = form.save()
             family.user.add(request.user)
+            new_family = family  # Priskiriame sukurtą Family objektą new_family kintamajam
             return redirect('profile')
     else:
         form = FamilyCreationForm()
 
-    return render(request, 'create_family_form.html', {'form': form})
+    return render(request, 'create_family_form.html', {'form': form, 'new_family': new_family})
+
 
 
 
 @login_required
 def budget_page(request):
-    user_family = request.user.family
-    if user_family:
+    # Gauname vartotojo šeimas
+    user_families = request.user.families.all()
+
+    if user_families.exists():
+        # Jei vartotojas priklauso šeimai, pasirinkime pirmą šeimą (galite keisti pagal poreikį)
+        user_family = user_families.first()
+
         # Gauti šeimos narius
         family_user = user_family.user.all()
-        print("Šeimos objektas:", user_family)
-
 
         # Gauti ar sukurti bendrą biudžetą šeimai
         shared_budget, created = SharedBudget.objects.get_or_create(family=user_family, defaults={'balance': 0})
@@ -163,6 +195,7 @@ def budget_page(request):
     else:
         # Vartotojas nepriklauso jokiai šeimai, tai galite nukreipti jį į šeimų kūrimo puslapį arba pridėti kitą elgesį pagal poreikį.
         return render(request, 'no_family.html')
+
 
 
 @login_required
