@@ -164,14 +164,14 @@ def create_family(request):
 @login_required
 def budget_page(request):
     # Gauname vartotojo šeimas
-    user_families = request.user.families.all()
+    user_families = request.user.profile.families.all()
 
     if user_families.exists():
         # Jei vartotojas priklauso šeimai, pasirinkime pirmą šeimą (galite keisti pagal poreikį)
         user_family = user_families.first()
 
         # Gauti šeimos narius
-        family_user = user_family.user.all()
+        family_user = user_family.members.all()
 
         # Gauti ar sukurti bendrą biudžetą šeimai
         shared_budget, created = SharedBudget.objects.get_or_create(family=user_family, defaults={'balance': 0})
