@@ -2,12 +2,14 @@
 {% load crispy_forms_tags %}
 {% block content %}
 
-    <h2>Šeima, prie kurios priklausote:</h2>
-    <ul>
+<div>
+  <p>Šeimos, prie kurių priklausote:</p>
+  <ul>
       {% for family in user_families %}
-        <li>{{ family.name }}</li>
+          <li>{{ family.name }}</li>
       {% endfor %}
-    </ul>
+  </ul>
+</div>
 
     <div class="content-section">
         

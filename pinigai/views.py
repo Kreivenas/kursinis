@@ -112,7 +112,8 @@ def profile(request):
         'user_families': user_families  # Pridėjome user_families į kontekstą
     }
 
-    return render(request, 'profile.html', context)
+    return render(request, 'profile.html', context=context)
+
 
 
 
