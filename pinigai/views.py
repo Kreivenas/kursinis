@@ -124,10 +124,13 @@ def profile(request):
 # logging.basicConfig(level=logging.INFO)
 
 
+@login_required
 def select_family(request):
     new_family = None
+
     if request.method == 'POST':
         form = FamilySelectionForm(request.POST)
+
         if form.is_valid():
             selected_family = form.cleaned_data.get('selected_family')
 
@@ -135,7 +138,10 @@ def select_family(request):
                 try:
                     family = Family.objects.get(name=selected_family.name)
                     family.user.add(request.user)
+                    # Add the family to the user's profile
+                    request.user.profile.families.add(family)
                     messages.success(request, 'Jūs priklausote pasirinktai šeimai.')
+                    return redirect('profile')
                 except Family.DoesNotExist:
                     messages.error(request, 'Pasirinkta šeima neegzistuoja.')
                     return redirect('profile')
@@ -143,11 +149,15 @@ def select_family(request):
             elif 'new_family_name' in form.cleaned_data:
                 new_family_name = form.cleaned_data['new_family_name']
                 new_family = create_new_family(request.user, new_family_name)
+                # Add the new family to the user's profile
+                request.user.profile.families.add(new_family)
                 return redirect('profile')
+
     else:
         form = FamilySelectionForm()
 
     return render(request, 'family_selection_form.html', {'form': form, 'new_family': new_family})
+
 
 
 @login_required

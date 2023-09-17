@@ -5,8 +5,8 @@
 <div>
   <p>Šeimos, prie kurių priklausote:</p>
   <ul>
-      {% for family in user_families %}
-          <li>{{ family.name }}</li>
+      {% for new_family_name in user_families %}
+          <li>{{ new_family_name.name }}</li>
       {% endfor %}
   </ul>
 </div>
