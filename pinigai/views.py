@@ -91,7 +91,7 @@ def sign_out(request):
 @login_required
 def profile(request):
     profile, created = Profile.objects.get_or_create(user_families=request.user)
-    user_families = profile.families.all()
+    user_families = request.user.profile.families.all()
 
     if request.method == "POST":
         u_form = UserUpdateForm(request.POST, instance=request.user)
@@ -116,57 +116,37 @@ def profile(request):
 
 
 
-@login_required
-def family_page(request):
-    return render(request, 'family.html')
+# @login_required
+# def family_page(request):
+#     return render(request, 'family.html')
 
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 
 def select_family(request):
     new_family = None
-
     if request.method == 'POST':
         form = FamilySelectionForm(request.POST)
-
         if form.is_valid():
-            selected_family_id = form.cleaned_data.get('selected_family')
+            selected_family = form.cleaned_data.get('selected_family')
 
-            if selected_family_id:
+            if selected_family:
                 try:
-                    selected_family = Family.objects.get(pk=selected_family_id)
-                    selected_family.user.add(request.user)
-                    logging.info("Priskirtas vartotojas prie šeimos.")
-                    return redirect('budget')
+                    family = Family.objects.get(name=selected_family.name)
+                    family.user.add(request.user)
+                    messages.success(request, 'Jūs priklausote pasirinktai šeimai.')
                 except Family.DoesNotExist:
-                    raise Http404("Pasirinkta šeima neegzistuoja.")
-
+                    messages.error(request, 'Pasirinkta šeima neegzistuoja.')
+                    return redirect('profile')
+                
             elif 'new_family_name' in form.cleaned_data:
                 new_family_name = form.cleaned_data['new_family_name']
                 new_family = create_new_family(request.user, new_family_name)
-
+                return redirect('profile')
     else:
         form = FamilySelectionForm()
 
     return render(request, 'family_selection_form.html', {'form': form, 'new_family': new_family})
-
-
-@login_required
-def create_family(request):
-    new_family = None  # Sukuriamas new_family kintamasis
-    if request.method == "POST":
-        form = FamilyCreationForm(request.POST)
-        if form.is_valid():
-            family = form.save()
-            family.user.add(request.user)
-            new_family = family  # Priskiriame sukurtą Family objektą new_family kintamajam
-            return redirect('profile')
-    else:
-        form = FamilyCreationForm()
-
-    return render(request, 'create_family_form.html', {'form': form, 'new_family': new_family})
-
-
 
 
 @login_required
