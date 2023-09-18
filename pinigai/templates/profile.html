@@ -4,11 +4,14 @@
 
 <div>
   <p>Šeimos, prie kurių priklausote:</p>
+
+
   <ul>
-      {% for new_family_name in user_families %}
-          <li>{{ new_family_name.name }}</li>
-      {% endfor %}
+    {% for family in user_families %}
+      <li><a href="{% url 'budget' family.id %}">{{ family.name }}</a></li>
+    {% endfor %}
   </ul>
+
 </div>
 
     <div class="content-section">

@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import Http404
+from django.http import HttpResponseForbidden
 from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
@@ -9,11 +9,13 @@ from django.db.models import Sum
 from django.shortcuts import redirect
 from .forms import LoginForm, RegisterForm, FamilyCreationForm, FamilySelectionForm, UserUpdateForm, ProfileUpdateForm, IncomeForm, expenseForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required
-from .models import Profile, SharedBudget, Income, Expense, Family
+from .models import Profile, Income, Expense, Family
 from rest_framework import generics
 import logging
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
+from django.db import IntegrityError
+
 
 
 
@@ -90,8 +92,8 @@ def sign_out(request):
 
 @login_required
 def profile(request):
-    profile, created = Profile.objects.get_or_create(user_families=request.user)
-    user_families = request.user.profile.families.all()
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    user_families = request.user.families.all()
 
     if request.method == "POST":
         u_form = UserUpdateForm(request.POST, instance=request.user)
@@ -137,9 +139,9 @@ def select_family(request):
             if selected_family:
                 try:
                     family = Family.objects.get(name=selected_family.name)
-                    family.user.add(request.user)
+                    family.users.add(request.user)
                     # Add the family to the user's profile
-                    request.user.profile.families.add(family)
+                    request.user.families.add(family)
                     messages.success(request, 'Jūs priklausote pasirinktai šeimai.')
                     return redirect('profile')
                 except Family.DoesNotExist:
@@ -148,11 +150,15 @@ def select_family(request):
                 
             elif 'new_family_name' in form.cleaned_data:
                 new_family_name = form.cleaned_data['new_family_name']
-                new_family = create_new_family(request.user, new_family_name)
-                # Add the new family to the user's profile
-                request.user.profile.families.add(new_family)
-                return redirect('profile')
-
+                try:
+                    new_family = Family.objects.create(name=new_family_name)
+                    new_family.users.add(request.user)
+                    # Add the new family to the user's profile
+                    request.user.families.add(new_family)
+                    return redirect('profile')
+                except IntegrityError:
+                    messages.error(request, 'Tokia šeima jau egzistuoja.')
+                    return redirect('profile')
     else:
         form = FamilySelectionForm()
 
@@ -160,95 +166,90 @@ def select_family(request):
 
 
 
+
 @login_required
-def budget_page(request):
-    # Gauname vartotojo šeimas
-    user_families = request.user.profile.families.all()
+def budget_page(request, family_id):
+    family = get_object_or_404(Family, id=family_id)
 
-    if user_families.exists():
-        # Jei vartotojas priklauso šeimai, pasirinkime pirmą šeimą (galite keisti pagal poreikį)
-        user_family = user_families.first()
+    if not request.user.families.filter(id=family_id).exists():
+        return HttpResponseForbidden("Permission denied")
 
-        # Gauti šeimos narius
-        family_user = user_family.members.all()
 
-        # Gauti ar sukurti bendrą biudžetą šeimai
-        shared_budget, created = SharedBudget.objects.get_or_create(family=user_family, defaults={'balance': 0})
 
-        # Gauti vartotojo pajamas ir išlaidas šeimoje
-        incomes = Income.objects.filter(user=request.user, family=user_family)
-        expenses = Expense.objects.filter(user=request.user, family=user_family)
+    incomes = Income.objects.filter(family=family)
+    expenses = Expense.objects.filter(family=family)
 
-        # Apskaičiuoti vartotojo visų pajamų ir išlaidų sumas
-        total_income_amount = incomes.aggregate(Sum('amount'))['amount__sum'] or 0
-        total_expense_amount = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_income_amount = incomes.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expense_amount = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
 
-        return render(request, 'budget.html', {
-            'family_user': family_user,
-            'shared_budget': shared_budget,
-            'incomes': incomes,
-            'expenses': expenses,
-            'total_income_amount': total_income_amount,
-            'total_expense_amount': total_expense_amount,
-        })
-    else:
-        # Vartotojas nepriklauso jokiai šeimai, tai galite nukreipti jį į šeimų kūrimo puslapį arba pridėti kitą elgesį pagal poreikį.
-        return render(request, 'no_family.html')
+    return render(request, 'budget.html', {
+        'incomes': incomes,
+        'expenses': expenses,
+        'total_income_amount': total_income_amount,
+        'total_expense_amount': total_expense_amount,
+        'family': family,
+    })
 
 
 
 @login_required
-def add_income(request):
+def add_income(request, family_id):
+    family = get_object_or_404(Family, id=family_id)
+
     if request.method == "POST":
         form = IncomeForm(request.POST)
         if form.is_valid():
             description = form.cleaned_data['description']
             amount = form.cleaned_data['amount']
             date = form.cleaned_data['date']
-            income = Income(user=request.user, description=description, amount=amount, date=date)
+            
+            income = Income(user=request.user, family=family, description=description, amount=amount, date=date)
             income.save()
 
-            # Atnaujiname bendrą biudžetą tik tuomet, kai sukuriamas naujas pajamų įrašas
-            shared_budget, created = SharedBudget.objects.get_or_create(pk=1, defaults={'balance': 0})
-            shared_budget.balance += income.amount
-            shared_budget.save()
+            family.balance += amount
+            family.save()
 
-            return redirect('budget')
+            return redirect('budget', family_id=family_id)
+
+            return redirect('budget', family_id=family_id)
     else:
         form = IncomeForm()
     context = {
-        'income_form': form
+        'income_form': form,
+        'family_id': family_id,
     }
     return render(request, 'add_income.html', context=context)
 
 
-
 @login_required
-def add_expense(request):
+def add_expense(request, family_id):
+    family = get_object_or_404(Family, id=family_id)
+
     if request.method == "POST":
         form = expenseForm(request.POST)
         if form.is_valid():
             description = form.cleaned_data['description']
             amount = form.cleaned_data['amount']
             date = form.cleaned_data['date']
-            
-            # Sukurkite naują išlaidų įrašą
-            expense = Expense(user=request.user, description=description, amount=amount, date=date)
+
+            expense = Expense(user=request.user, family=family, description=description, amount=amount, date=date)
             expense.save()
 
-            # Atnaujinkite bendrą biudžetą tik tuomet, kai sukuriamas naujas išlaidų įrašas
-            shared_budget, created = SharedBudget.objects.get_or_create(pk=1, defaults={'balance': 0})
-            shared_budget.balance -= expense.amount
-            shared_budget.save()
+            family.balance -= amount
+            family.save()
 
-            return redirect('budget')
+            # Nukreipiame į biudžeto puslapį su tinkama šeimos ID
+            return redirect('budget', family_id=family_id)
+
     else:
         form = expenseForm()
 
     context = {
         'expense_form': form,
+        'family_id': family_id,
     }
     return render(request, 'add_expense.html', context=context)
+
 
 
 

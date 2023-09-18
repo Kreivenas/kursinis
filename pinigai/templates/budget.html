@@ -1,23 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
+
 <h1>Šeimos biudžetas</h1>
 
 {% block family_message %}
-  {% if user.family %}
-    <p>Sveiki, jūs priklauso šeimai {{ user.family.name }}.</p>
+  {% if family in user.families.all %}
+    <p>Sveiki, jūs priklauso šeimai {{ family.name }}.</p>
   {% else %}
     <p>Atsiprašome, bet atrodo, kad jūs nepriklauso jokiai šeimai. Norėdami naudotis biudžeto funkcijomis, sukurti ar prisijungti prie šeimos.</p>
   {% endif %}
 {% endblock %}
 
-{% if shared_budget %}
+{{ family.balance }}
+
+{% if family.balance %}
   <h2>Šeimos biudžeto balansas</h2>
-  <p>Balansas: {{ shared_budget.balance }} EUR</p>
+  <p>Balansas: {{ family.balance }} EUR</p>
 {% else %}
   <p>Nėra šeimos biudžeto.</p>
 {% endif %}
 
-<h2>Mano Pajamos:</h2>
+<h2>Šeimos Pajamos:</h2>
 <ul>
   {% for income in incomes %}
     <li>{{ income.description }} - {{ income.amount }} EUR</li>
@@ -26,7 +29,7 @@
   {% endfor %}
 </ul>
 
-<h2>Mano Išlaidos:</h2>
+<h2>Šeimos Išlaidos:</h2>
 <ul>
   {% for expense in expenses %}
     <li>{{ expense.description }} - {{ expense.amount }} EUR</li>
@@ -35,7 +38,8 @@
   {% endfor %}
 </ul>
 
-<a class="button" href="{% url 'add_income' %}" class="btn btn-primary">Pajamos</a>
-<a class="button" href="{% url 'add_expense' %}" class="btn btn-primary">Išlaidos</a>
+<a class="button" href="{% url 'add_income' family_id=family.id %}" class="btn btn-primary">Pajamos</a>
+<a class="button" href="{% url 'add_expense' family_id=family.id %}" class="btn btn-primary">Išlaidos</a>
+
 
 {% endblock %}

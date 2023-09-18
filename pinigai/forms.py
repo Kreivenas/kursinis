@@ -45,7 +45,7 @@ class FamilyCreationForm(forms.ModelForm):
     description = forms.CharField(max_length=255)
     class Meta:
         model = Family
-        fields = ['name', 'user' ]  # Pridėkite laukus pagal poreikį.
+        fields = ['name', 'users' ]  # Pridėkite laukus pagal poreikį.
 
 class FamilySelectionForm(forms.Form):
     selected_family = forms.ModelChoiceField(

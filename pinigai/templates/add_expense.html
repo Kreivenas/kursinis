@@ -1,11 +1,10 @@
 {% extends "base.html" %}
-
 {% block content %}
-  <h1>Pridėti išlaidas</h1>
+  <h1>Pridėti Išlaidas</h1>
   <form method="post">
     {% csrf_token %}
     {{ expense_form.as_p }}
-    <button type="submit">Pridėti išlaidas</button>
+    <button type="submit">Pridėti Išlaidas</button>
   </form>
-  <a href="{% url 'budget' %}">Atgal į biudžetą</a>
-{% endblock %}
+  <a href="{% url 'budget' family_id=family_id %}">Grįžti į biudžeto puslapį</a>
+  {% endblock %}
