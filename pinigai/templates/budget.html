@@ -9,6 +9,8 @@
   {% else %}
     <p>Atsiprašome, bet atrodo, kad jūs nepriklauso jokiai šeimai. Norėdami naudotis biudžeto funkcijomis, sukurti ar prisijungti prie šeimos.</p>
   {% endif %}
+  
+  <a href="{% url 'leave_family' family_id=family.id %}">Palikti šeimą</a>
 
   <h1>Vartotojai, priklausantys šeimai</h1>
   <ul>

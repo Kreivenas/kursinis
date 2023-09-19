@@ -205,6 +205,18 @@ def family_users(request, family_id):
     users = family.users.all()
     return render(request, 'family_users.html', {'users': users})
 
+@login_required
+def leave_family(request, family_id):
+    family = get_object_or_404(Family, id=family_id)
+
+    if request.user.families.filter(id=family_id).exists():
+        family.users.remove(request.user)
+        messages.success(request, 'Jūs sėkmingai palikote šeimą.')
+    else:
+        messages.error(request, 'Jūs nepriklausote šiai šeimai.')
+
+    return redirect('profile')
+
 
 @login_required
 def add_income(request, family_id):
