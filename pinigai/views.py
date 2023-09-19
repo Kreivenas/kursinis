@@ -33,21 +33,8 @@ def sign_up(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.username = user.username.lower()
+            user.username = user.username.upper()
             user.save()
-
-            selected_family = form.cleaned_data.get('family_choice')
-            new_family_name = form.cleaned_data.get('new_family_name')
-
-            if selected_family:
-                # Vartotojas pasirinko esamą šeimą
-                selected_family.user.add(user)  # Pridėkite vartotoją prie šeimos
-            elif new_family_name:
-                # Vartotojas sukūrė naują šeimą
-                new_family = create_new_family(user, new_family_name)
-            else:
-                messages.error(request, 'Please select an existing family or create a new one.')
-
             messages.success(request, 'You have signed up successfully.')
             login(request, user)
             return redirect('profile')

@@ -10,12 +10,9 @@ class LoginForm(forms.Form):
     
 
 class RegisterForm(UserCreationForm):
-    pareigos = forms.CharField(max_length=100)
-    family_choice = forms.ModelChoiceField(queryset=Family.objects.all(), required=False, empty_label='Select an existing family')
-    new_family_name = forms.CharField(max_length=100, required=False)
     class Meta:
         model=User
-        fields = ['username','email','pareigos','family_choice', 'new_family_name','password1','password2'] 
+        fields = ['username','email','password1','password2'] 
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
