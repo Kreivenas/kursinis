@@ -56,3 +56,12 @@ class FamilySelectionForm(forms.Form):
         required=False,  # Nereikalingas privalomas laukas
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Įveskite naujos šeimos pavadinimą'}),  # Teksto laukas su stiliais
     )
+
+class AddUserToFamilyForm(forms.Form):
+    username = forms.CharField(label='Username')
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if not User.objects.filter(username=username).exists():
+            raise forms.ValidationError('User does not exist.')
+        return username

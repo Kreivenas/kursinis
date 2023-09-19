@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from django.db.models import Sum
 from django.shortcuts import redirect
-from .forms import LoginForm, RegisterForm, FamilyCreationForm, FamilySelectionForm, UserUpdateForm, ProfileUpdateForm, IncomeForm, expenseForm, UserUpdateForm
+from .forms import LoginForm, RegisterForm, AddUserToFamilyForm, FamilySelectionForm, UserUpdateForm, ProfileUpdateForm, IncomeForm, expenseForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required
 from .models import Profile, Income, Expense, Family
 from rest_framework import generics
@@ -169,14 +169,41 @@ def budget_page(request, family_id):
     total_income_amount = incomes.aggregate(Sum('amount'))['amount__sum'] or 0
     total_expense_amount = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
 
+    add_user_form = AddUserToFamilyForm()  # Sukurkite formą vartotojo pridėjimui į šeimą
+    users = family.users.all()
+
     return render(request, 'budget.html', {
         'incomes': incomes,
         'expenses': expenses,
         'total_income_amount': total_income_amount,
         'total_expense_amount': total_expense_amount,
         'family': family,
+        'add_user_form': add_user_form,
+        'users': users
     })
 
+@login_required
+def add_user_to_family(request, family_id):
+    family = get_object_or_404(Family, id=family_id)
+    family = get_object_or_404(Family, id=family_id)
+
+    if request.method == 'POST':
+        form = AddUserToFamilyForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            user_to_add = User.objects.get(username=username)
+            family.users.add(user_to_add)
+            messages.success(request, f'{username} added to the family.')
+            return redirect('budget', family_id=family_id)
+    else:
+        form = AddUserToFamilyForm()
+
+    return render(request, 'add_user_to_family.html', {'form': form, 'family': family})
+
+def family_users(request, family_id):
+    family = get_object_or_404(Family, id=family_id)
+    users = family.users.all()
+    return render(request, 'family_users.html', {'users': users})
 
 
 @login_required

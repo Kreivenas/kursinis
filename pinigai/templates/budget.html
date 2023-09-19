@@ -9,9 +9,18 @@
   {% else %}
     <p>Atsiprašome, bet atrodo, kad jūs nepriklauso jokiai šeimai. Norėdami naudotis biudžeto funkcijomis, sukurti ar prisijungti prie šeimos.</p>
   {% endif %}
+
+  <h1>Vartotojai, priklausantys šeimai</h1>
+  <ul>
+      {% for user in users %}
+          <li>{{ user.username }}</li>
+      {% endfor %}
+  </ul>
+
+
 {% endblock %}
 
-{{ family.balance }}
+<a href="{% url 'add_user_to_family' family_id=family.id %}">Pridėti vartotoją į šeimą</a>
 
 {% if family.balance %}
   <h2>Šeimos biudžeto balansas</h2>
