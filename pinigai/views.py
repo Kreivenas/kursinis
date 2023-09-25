@@ -228,7 +228,7 @@ def add_income(request, family_id):
             description = form.cleaned_data['description']
             amount = form.cleaned_data['amount']
             date = form.cleaned_data['date']
-            
+         
             income = Income(user=request.user, family=family, description=description, amount=amount, date=date)
             income.save()
 
@@ -237,7 +237,6 @@ def add_income(request, family_id):
 
             return redirect('budget', family_id=family_id)
 
-            return redirect('budget', family_id=family_id)
     else:
         form = IncomeForm()
     context = {
