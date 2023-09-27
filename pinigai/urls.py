@@ -13,9 +13,12 @@ urlpatterns = [
     path('add_income/<int:family_id>/', views.add_income, name='add_income'),
     path('add_expense/<int:family_id>/', views.add_expense, name='add_expense'),
     path('select_family/', views.select_family, name='select_family'),
+    path('delete_family/<int:family_id>/', views.delete_family, name='delete_family'),
     path('add_user_to_family/<int:family_id>/', views.add_user_to_family, name='add_user_to_family'),
     path('leave_family/<int:family_id>/', views.leave_family, name='leave_family'),
 ]
+
+
 
     # path('family_form/', views.create_family, name='create_family_form'),
     # path('family/', views.family_page, name='family_page'),

@@ -18,6 +18,8 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+ALLOWED_HOSTS = ['kreivenas.pythonanywhere.com', 'localhost', '127.0.0.1']
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -27,8 +29,6 @@ SECRET_KEY = 'django-insecure-p0qm5zujef8svvb5a6ynk23nedw)!-w&n71v(x840@c-w1+0n$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'pinigai.apps.PinigaiConfig',
     'crispy_forms',
-    'crispy_bootstrap4',    
+    'crispy_bootstrap4',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -124,7 +124,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_ROOT = '/home/Kreivenas/kursinis/static'
+
+STATIC_URL = '/static/'
 
 
 # Default primary key field type

@@ -3,19 +3,18 @@
 {% block content %}
 
 <div>
-  <p>Šeimos, prie kurių priklausote:</p>
-
+  <h3>Šeimos, prie kurių priklausote:</h3>
 
   <ul>
     {% for family in user_families %}
-      <li><a href="{% url 'budget' family.id %}">{{ family.name }}</a></li>
+      <p><a href="{% url 'budget' family.id %}">{{ family.name }}</a></p>
     {% endfor %}
   </ul>
 
 </div>
 
     <div class="content-section">
-        
+
       <div class="media">
         <img class="rounded-circle account-img" src="{{ user.profile.photo.url }}">
         <div class="media-body">

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
 
 
@@ -12,5 +13,16 @@
     {{ form.new_family_name }}
     <button class="button" type="submit">Pasirinkite</button>
 </form>
+
+<div>
+  <h3>Šeimos, prie kurių priklausote:</h3>
+
+  <ul>
+    {% for family in user_families %}
+      <p><a href="{% url 'budget' family.id %}">{{ family.name }}</a></p>
+    {% endfor %}
+  </ul>
+
+</div>
 
 {% endblock %}

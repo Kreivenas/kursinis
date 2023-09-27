@@ -19,7 +19,7 @@ from django.db import IntegrityError
 
 
 
-def index(request):    
+def index(request):
     return render(request, 'index.html')
 
 def create_new_family(user, family_name):
@@ -54,10 +54,10 @@ def sign_in(request):
 
         form = LoginForm()
         return render(request,'login.html', {'form': form})
-    
+
     elif request.method == 'POST':
         form = LoginForm(request.POST)
-        
+
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -66,16 +66,16 @@ def sign_in(request):
                 login(request, user)
                 messages.success(request,f'Hi {username.title()}, welcome back!')
                 return redirect('profile')
-        
+
         # form is not valid or user is not authenticated
         messages.error(request,f'Invalid username or password')
         return render(request,'login.html',{'form': form})
-    
+
 
 def sign_out(request):
     logout(request)
     messages.success(request,f'You have been logged out.')
-    return redirect('login')       
+    return redirect('login')
 
 @login_required
 def profile(request):
@@ -116,6 +116,7 @@ def profile(request):
 @login_required
 def select_family(request):
     new_family = None
+    user_families = request.user.families.all()
 
     if request.method == 'POST':
         form = FamilySelectionForm(request.POST)
@@ -127,14 +128,13 @@ def select_family(request):
                 try:
                     family = Family.objects.get(name=selected_family.name)
                     family.users.add(request.user)
-                    # Add the family to the user's profile
                     request.user.families.add(family)
                     messages.success(request, 'Jūs priklausote pasirinktai šeimai.')
                     return redirect('profile')
                 except Family.DoesNotExist:
                     messages.error(request, 'Pasirinkta šeima neegzistuoja.')
                     return redirect('profile')
-                
+
             elif 'new_family_name' in form.cleaned_data:
                 new_family_name = form.cleaned_data['new_family_name']
                 try:
@@ -149,7 +149,8 @@ def select_family(request):
     else:
         form = FamilySelectionForm()
 
-    return render(request, 'family_selection_form.html', {'form': form, 'new_family': new_family})
+    return render(request, 'family_selection_form.html', {'form': form, 'new_family': new_family, 'user_families': user_families})
+
 
 
 
@@ -185,7 +186,6 @@ def budget_page(request, family_id):
 @login_required
 def add_user_to_family(request, family_id):
     family = get_object_or_404(Family, id=family_id)
-    family = get_object_or_404(Family, id=family_id)
 
     if request.method == 'POST':
         form = AddUserToFamilyForm(request.POST)
@@ -217,6 +217,22 @@ def leave_family(request, family_id):
 
     return redirect('profile')
 
+@login_required
+def delete_family(request, family_id):
+    family = get_object_or_404(Family, id=family_id)
+
+    # Patikrinkime, ar vartotojas priklauso šiai šeimai
+    if request.user in family.users.all():
+        # Tik šeimos savininkas gali ištrinti šeimą
+        if request.user == family.users.first():
+            family.delete()
+            messages.success(request, 'Šeima ištrinta sėkmingai.')
+        else:
+            messages.error(request, 'Neturite leidimo ištrinti šios šeimos.')
+    else:
+        messages.error(request, 'Neturite leidimo ištrinti šios šeimos.')
+
+    return redirect('profile')
 
 @login_required
 def add_income(request, family_id):
@@ -228,7 +244,7 @@ def add_income(request, family_id):
             description = form.cleaned_data['description']
             amount = form.cleaned_data['amount']
             date = form.cleaned_data['date']
-         
+
             income = Income(user=request.user, family=family, description=description, amount=amount, date=date)
             income.save()
 

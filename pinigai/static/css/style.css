@@ -2,7 +2,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    margin: 0;
+    margin: 10;
     padding: 0;
     background-color:white;
     text-align: center;
@@ -43,7 +43,7 @@ header {
     font-size: 17px;
 }
 
-  
+
 
 .nav-link:hover {
     text-decoration: underline;
@@ -54,7 +54,7 @@ header {
     background-color: #04AA6D;
     color: white;
   }
-  
+
   @media screen and (max-width: 600px) {
     .topnav a:not(:first-child) {display: none;}
     .topnav a.icon {
@@ -62,7 +62,7 @@ header {
       display: block;
     }
   }
-  
+
   @media screen and (max-width: 600px) {
     .topnav.responsive {position: relative;}
     .topnav.responsive .icon {
@@ -89,12 +89,12 @@ header {
     background-color: #6bbe26;
     margin: 10px;
     padding: 10px;
-    align-items: self-start; 
+    align-items: self-start;
 }
 
 .button1{
     background-color: #6bbe26;
     margin: 10px;
     padding: 10px;
-    align-items: self-start; 
+    align-items: self-start;
 }
