@@ -8,6 +8,7 @@ urlpatterns = [
     path('logout/', views.sign_out, name='logout'),
     path('password_reset/', PasswordResetView.as_view(), name='password_reset'),
     path('register/', views.sign_up, name='register'),
+    path('profiles/<int:user_id>/', views.view_profile, name='profiles'),
     path('profile/', views.profile, name='profile'),
     path('budget/<int:family_id>/', views.budget_page, name='budget'),
     path('add_income/<int:family_id>/', views.add_income, name='add_income'),

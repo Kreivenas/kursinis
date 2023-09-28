@@ -104,6 +104,11 @@ def profile(request):
     return render(request, 'profile.html', context=context)
 
 
+@login_required
+def view_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    return render(request, 'profiles.html', {'user': user})
+
 
 
 # @login_required

@@ -18,13 +18,15 @@ class Family(models.Model):
 
 
     def __str__(self):
-        return self.name  
+        return self.name
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    id = models.AutoField(User, primary_key=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     pareigos = models.CharField(max_length=100)
+    email = models.EmailField(max_length=255, default='', blank=True)
+    first_name = models.CharField(max_length=30, default='', blank=True)
+    last_name = models.CharField(max_length=30, default='', blank=True)
     photo = models.ImageField(default="profile_pics/default.jpeg", upload_to="profile_pics")
 
     def __str__(self):
@@ -43,7 +45,7 @@ class Profile(models.Model):
 
 class Income(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="incomes")
-    family = models.ForeignKey(Family, on_delete=models.SET_NULL, null=True, blank=True)  
+    family = models.ForeignKey(Family, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.CharField(max_length=255)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=255, default='Other')
@@ -52,11 +54,11 @@ class Income(models.Model):
 
     def __str__(self):
         return f"Income - {self.description}"
-    
+
 
 class Expense(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="expenses")
-    family = models.ForeignKey(Family, on_delete=models.SET_NULL, null=True, blank=True)  # Šis laukas rodo į šeimą, kuriai priklauso pajama.    
+    family = models.ForeignKey(Family, on_delete=models.SET_NULL, null=True, blank=True)  # Šis laukas rodo į šeimą, kuriai priklauso pajama.
     description = models.CharField(max_length=255)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.CharField(max_length=255, default='Other')

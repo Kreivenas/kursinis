@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div>
+  <h2>Vartotojo informacija</h2>
+  <ul>
+    <li><strong>Vartotojo vardas:</strong> {{ user.first_name }} {{ user.last_name }}</li>
+    <li><strong>Prisijungimo vardas:</strong> {{ user.username }}</li>
+    <li><strong>El. paštas:</strong> {{ user.email }}</li>
+  </ul>
+
+  <div>
+    <h3>Vartotojo nuotrauka</h3>
+    <img src="{{ user.profile.photo.url }}" alt="Nuotrauka">
+  </div>
+</div>
+
+{% endblock content %}

@@ -10,14 +10,19 @@ class LoginForm(forms.Form):
 
 
 class RegisterForm(UserCreationForm):
-    class Meta:
-        model=User
-        fields = ['username','email','password1','password2']
+    first_name = forms.CharField(max_length=30, required=True, help_text='Vardas')
+    last_name = forms.CharField(max_length=30, required=True, help_text='Pavardė')
 
-class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
+
+class UserUpdateForm(forms.ModelForm):
+    first_name = forms.CharField(max_length=30, required=True, help_text='Vardas')
+    last_name = forms.CharField(max_length=30, required=True, help_text='Pavardė')
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']
 
 
 class ProfileUpdateForm(forms.ModelForm):
