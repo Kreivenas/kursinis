@@ -35,7 +35,7 @@ def sign_up(request):
             user = form.save(commit=False)
             user.username = user.username.upper()
             user.save()
-            messages.success(request, 'You have signed up successfully.')
+            messages.success(request, 'Atlikote sėkmingą registraciją.')
             login(request, user)
             return redirect('profile')
         else:
@@ -64,17 +64,17 @@ def sign_in(request):
             user = authenticate(request,username=username,password=password)
             if user:
                 login(request, user)
-                messages.success(request,f'Hi {username.title()}, welcome back!')
+                messages.success(request,f'Labas {username.title()}, Malonu Tave Matyti!')
                 return redirect('profile')
 
         # form is not valid or user is not authenticated
-        messages.error(request,f'Invalid username or password')
+        messages.error(request,f'Neteisingas naudotojo vardas arba slaptažodis.')
         return render(request,'login.html',{'form': form})
 
 
 def sign_out(request):
     logout(request)
-    messages.success(request,f'You have been logged out.')
+    messages.success(request,f'Jūs esate atsijungęs.')
     return redirect('login')
 
 @login_required
@@ -129,10 +129,10 @@ def select_family(request):
                     family = Family.objects.get(name=selected_family.name)
                     family.users.add(request.user)
                     request.user.families.add(family)
-                    messages.success(request, 'Jūs priklausote pasirinktai šeimai.')
+                    messages.success(request, 'Jūs priklausote pasirinktam fondui.')
                     return redirect('profile')
                 except Family.DoesNotExist:
-                    messages.error(request, 'Pasirinkta šeima neegzistuoja.')
+                    messages.error(request, 'Pasirinkta Fondas neegzistuoja.')
                     return redirect('profile')
 
             if 'new_family_name' in form.cleaned_data:
@@ -144,7 +144,7 @@ def select_family(request):
                     request.user.families.add(new_family)
                     return redirect('profile')
                 except IntegrityError:
-                    messages.error(request, 'Tokia šeima jau egzistuoja.')
+                    messages.error(request, 'Tokis fondas jau egzistuoja.')
                     return redirect('profile')
     else:
         form = FamilySelectionForm()
@@ -160,7 +160,7 @@ def budget_page(request, family_id):
     family = get_object_or_404(Family, id=family_id)
 
     if not request.user.families.filter(id=family_id).exists():
-        return HttpResponseForbidden("Permission denied")
+        return HttpResponseForbidden("Prieiga uždrausta")
 
 
 
@@ -193,7 +193,7 @@ def add_user_to_family(request, family_id):
             username = form.cleaned_data['username']
             user_to_add = User.objects.get(username=username)
             family.users.add(user_to_add)
-            messages.success(request, f'{username} added to the family.')
+            messages.success(request, f'{username} Pridėtas prie fondo".')
             return redirect('budget', family_id=family_id)
     else:
         form = AddUserToFamilyForm()
@@ -211,9 +211,9 @@ def leave_family(request, family_id):
 
     if request.user.families.filter(id=family_id).exists():
         family.users.remove(request.user)
-        messages.success(request, 'Jūs sėkmingai palikote šeimą.')
+        messages.success(request, 'Jūs sėkmingai palikote fondą.')
     else:
-        messages.error(request, 'Jūs nepriklausote šiai šeimai.')
+        messages.error(request, 'Jūs nepriklausote šiam fondui.')
 
     return redirect('profile')
 
@@ -226,11 +226,11 @@ def delete_family(request, family_id):
         # Tik šeimos savininkas gali ištrinti šeimą
         if request.user == family.users.first():
             family.delete()
-            messages.success(request, 'Šeima ištrinta sėkmingai.')
+            messages.success(request, 'Fondas ištrinta sėkmingai.')
         else:
-            messages.error(request, 'Neturite leidimo ištrinti šios šeimos.')
+            messages.error(request, 'Neturite leidimo ištrinti šio fondo.')
     else:
-        messages.error(request, 'Neturite leidimo ištrinti šios šeimos.')
+        messages.error(request, 'Neturite leidimo ištrinti šio fondo.')
 
     return redirect('profile')
 
@@ -241,9 +241,9 @@ def add_income(request, family_id):
     if request.method == "POST":
         form = IncomeForm(request.POST)
         if form.is_valid():
-            description = form.cleaned_data['description']
-            amount = form.cleaned_data['amount']
-            date = form.cleaned_data['date']
+            Paskirtis = form.cleaned_data['Paskirtis']
+            Suma = form.cleaned_data['Suma']
+            Data = form.cleaned_data['Data']
 
             income = Income(user=request.user, family=family, description=description, amount=amount, date=date)
             income.save()
@@ -269,9 +269,9 @@ def add_expense(request, family_id):
     if request.method == "POST":
         form = expenseForm(request.POST)
         if form.is_valid():
-            description = form.cleaned_data['description']
-            amount = form.cleaned_data['amount']
-            date = form.cleaned_data['date']
+            Paskirtis = form.cleaned_data['Paskirtis']
+            Suma = form.cleaned_data['Suma']
+            Data = form.cleaned_data['Data']
 
             expense = Expense(user=request.user, family=family, description=description, amount=amount, date=date)
             expense.save()

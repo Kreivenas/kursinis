@@ -27,16 +27,16 @@ class ProfileUpdateForm(forms.ModelForm):
 
 
 class IncomeForm(forms.Form):
-    description = forms.CharField(max_length=255)
-    amount = forms.DecimalField(max_digits=10, decimal_places=2)
-    date = forms.DateField()
+    Paskirtis = forms.CharField(max_length=255)
+    Suma = forms.DecimalField(max_digits=10, decimal_places=2)
+    Data = forms.DateField()
 
 
 
 class expenseForm(forms.Form):
-    description = forms.CharField(max_length=255)
-    amount = forms.DecimalField(max_digits=10, decimal_places=2)
-    date = forms.DateField()
+    Paskirtis = forms.CharField(max_length=255)
+    Suma = forms.DecimalField(max_digits=10, decimal_places=2)
+    Data = forms.DateField()
 
 class FamilyCreationForm(forms.ModelForm):
     description = forms.CharField(max_length=255)
@@ -54,7 +54,7 @@ class FamilySelectionForm(forms.Form):
     new_family_name = forms.CharField(
         max_length=255,
         required=False,  # Nereikalingas privalomas laukas
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Įveskite naujos šeimos pavadinimą'}),  # Teksto laukas su stiliais
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Įveskite naujo fondo pavadinimą'}),  # Teksto laukas su stiliais
     )
 
 class AddUserToFamilyForm(forms.Form):

@@ -10,11 +10,11 @@
     <p>Atsiprašome, bet atrodo, kad jūs nepriklauso jokiam fondui. Norėdami naudotis biudžeto funkcijomis, sukurti ar prisijungti prie fondo.</p>
   {% endif %}
 
-  <a href="{% url 'leave_family' family_id=family.id %}">Palikti šeimą:</a> {{ family.name }}
+  <a href="{% url 'leave_family' family_id=family.id %}">Palikti fondaą:</a> {{ family.name }}
 
 
 <p>
-  <a href="{% url 'delete_family' family.id %}">Ištrinti šeimą:</a> {{ family.name }}
+  <a href="{% url 'delete_family' family.id %}">Ištrinti fondaą:</a> {{ family.name }}
 </p>
 
 
@@ -29,7 +29,7 @@
 
 {% endblock %}
 
-<a href="{% url 'add_user_to_family' family_id=family.id %}">Pridėti vartotoją į šeimą</a>
+<a href="{% url 'add_user_to_family' family_id=family.id %}">Pridėti vartotoją į fondą</a>
 
 {% if family.balance %}
   <h2>Fondo biudžeto balansas</h2>
