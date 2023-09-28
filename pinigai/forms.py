@@ -7,17 +7,17 @@ from django.contrib.auth.models import User
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=65)
     password = forms.CharField(max_length=65, widget=forms.PasswordInput)
-    
+
 
 class RegisterForm(UserCreationForm):
     class Meta:
         model=User
-        fields = ['username','email','password1','password2'] 
+        fields = ['username','email','password1','password2']
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email']       
+        fields = ['username', 'email']
 
 
 class ProfileUpdateForm(forms.ModelForm):
@@ -30,14 +30,14 @@ class IncomeForm(forms.Form):
     description = forms.CharField(max_length=255)
     amount = forms.DecimalField(max_digits=10, decimal_places=2)
     date = forms.DateField()
-    
+
 
 
 class expenseForm(forms.Form):
     description = forms.CharField(max_length=255)
     amount = forms.DecimalField(max_digits=10, decimal_places=2)
     date = forms.DateField()
-   
+
 class FamilyCreationForm(forms.ModelForm):
     description = forms.CharField(max_length=255)
     class Meta:
@@ -45,12 +45,12 @@ class FamilyCreationForm(forms.ModelForm):
         fields = ['name', 'users' ]  # Pridėkite laukus pagal poreikį.
 
 class FamilySelectionForm(forms.Form):
-    selected_family = forms.ModelChoiceField(
-        queryset=Family.objects.all(),  # Gauname visus šeimos objektus
-        empty_label="Pasirinkite šeimą",  # Tekstas pradiniam pasirinkimui
-        required=False,  # Nereikalingas privalomas pasirinkimas
-        widget=forms.Select(attrs={'class': 'form-control'}),  # Paprastas pasirinkimo langelis su stiliais
-    )
+    # selected_family = forms.ModelChoiceField(
+    #     queryset=Family.objects.all(),  # Gauname visus šeimos objektus
+    #     empty_label="Pasirinkite šeimą",  # Tekstas pradiniam pasirinkimui
+    #     required=False,  # Nereikalingas privalomas pasirinkimas
+    #     widget=forms.Select(attrs={'class': 'form-control'}),  # Paprastas pasirinkimo langelis su stiliais
+    # )
     new_family_name = forms.CharField(
         max_length=255,
         required=False,  # Nereikalingas privalomas laukas

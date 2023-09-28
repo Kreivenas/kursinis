@@ -3,7 +3,11 @@
 {% block content %}
 
 
-<h1>Pasirinkite šeimą</h1>
+<h1>Sukurkite Naują Fondą</h1>
+<p style="font-size: small;">
+  Arba kreipkitės į fondo kūrėją, jog jus pridėtų prie jau esančio fondo.<br>
+</p>
+
 {% if form.errors %}
     <p style="color: red;">Formos klaida. Patikrinkite pasirinkimą.</p>
 {% endif %}
@@ -15,7 +19,7 @@
 </form>
 
 <div>
-  <h3>Šeimos, prie kurių priklausote:</h3>
+  <h3>Fondai, prie kurių priklausote:</h3>
 
   <ul>
     {% for family in user_families %}

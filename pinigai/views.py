@@ -135,7 +135,7 @@ def select_family(request):
                     messages.error(request, 'Pasirinkta šeima neegzistuoja.')
                     return redirect('profile')
 
-            elif 'new_family_name' in form.cleaned_data:
+            if 'new_family_name' in form.cleaned_data:
                 new_family_name = form.cleaned_data['new_family_name']
                 try:
                     new_family = Family.objects.create(name=new_family_name)

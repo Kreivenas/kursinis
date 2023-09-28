@@ -4,9 +4,9 @@
 
 {% block content %}
     <div class="container">
-        <p>Sveiki atvykę į mano puslapį! Tai yra Django ir HTML pavyzdys.</p>
+        <p>Sveiki atvykę į mano puslapį!</p>
         <!-- Registracijos forma -->
-        <h2>Buhalterija</h2>
+        <h2>Bendras Biudžetas</h2>
         {% if user.is_authenticated %}
         {% else %}
         <a href="{% url 'login' %}">Eiti į biudžeto puslapį tik prisijungus</a>

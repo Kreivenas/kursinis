@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Šeimos biudžetas</h1>
+<h1>Biudžetas</h1>
 
 {% block family_message %}
   {% if family in user.families.all %}
-    <p>Sveiki, jūs priklauso šeimai: {{ family.name }}.</p>
+    <p>Sveiki, jūs priklausote fondui: {{ family.name }}.</p>
   {% else %}
-    <p>Atsiprašome, bet atrodo, kad jūs nepriklauso jokiai šeimai. Norėdami naudotis biudžeto funkcijomis, sukurti ar prisijungti prie šeimos.</p>
+    <p>Atsiprašome, bet atrodo, kad jūs nepriklauso jokiam fondui. Norėdami naudotis biudžeto funkcijomis, sukurti ar prisijungti prie fondo.</p>
   {% endif %}
 
   <a href="{% url 'leave_family' family_id=family.id %}">Palikti šeimą:</a> {{ family.name }}
@@ -19,7 +19,7 @@
 
 
 
-  <h1>Vartotojai, priklausantys šeimai</h1>
+  <h1>Vartotojai, priklausantys fondui</h1>
   <ul>
       {% for user in users %}
           <li>{{ user.username }}</li>
@@ -32,22 +32,22 @@
 <a href="{% url 'add_user_to_family' family_id=family.id %}">Pridėti vartotoją į šeimą</a>
 
 {% if family.balance %}
-  <h2>Šeimos biudžeto balansas</h2>
+  <h2>Fondo biudžeto balansas</h2>
   <p>Balansas: {{ family.balance }} EUR</p>
 {% else %}
-  <p>Nėra šeimos biudžeto.</p>
+  <p>Nėra fondo biudžeto.</p>
 {% endif %}
 
-<h2>Šeimos Pajamos:</h2>
+<h2>Fondo Pajamos:</h2>
 <ul>
   {% for income in incomes %}
-    <li>{{ income.user.username }} - {{ income.description }} - {{ income.amount }} EUR</li>
+    <li>{{ income.user.username }} - {{ income.description }} + {{ income.amount }} EUR</li>
   {% empty %}
     <li>Nėra įrašytų pajamų.</li>
   {% endfor %}
 </ul>
 
-<h2>Šeimos Išlaidos:</h2>
+<h2>Fondo Išlaidos:</h2>
 <ul>
   {% for expense in expenses %}
     <li>{{ expense.user.username }} - {{ expense.description }} - {{ expense.amount }} EUR</li>
