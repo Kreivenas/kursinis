@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Profile, Family
+from .models import Profile, Family, Income, Expense
 from django import forms
 from django.contrib.auth.models import User
 
@@ -18,30 +18,52 @@ class RegisterForm(UserCreationForm):
         fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
 
 class UserUpdateForm(forms.ModelForm):
-    first_name = forms.CharField(max_length=30, required=True, help_text='Vardas')
-    last_name = forms.CharField(max_length=30, required=True, help_text='Pavardė')
+    first_name = forms.CharField(label='Vardas', max_length=30, required=True, help_text='Vardas')
+    last_name = forms.CharField(label='Pavardė', max_length=30, required=True, help_text='Pavardė')
+    email = forms.CharField(label='El. paštas', max_length=30, required=True, help_text='El. paštas')
+    username = forms.CharField(label='Prisijungimo vardas', max_length=30, required=True, help_text='Prisijungimo vardas')
+
     class Meta:
         model = User
         fields = ['username', 'email', 'first_name', 'last_name']
 
 
 class ProfileUpdateForm(forms.ModelForm):
+    photo = forms.FileField(label='Nuotrauka', required=True, )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['photo'].widget.initial_text = "Esama"
+        self.fields['photo'].widget.input_text = "Pakeisti"
+
     class Meta:
         model = Profile
         fields = ['photo']
 
 
-class IncomeForm(forms.Form):
-    Paskirtis = forms.CharField(max_length=255)
-    Suma = forms.DecimalField(max_digits=10, decimal_places=2)
-    Data = forms.DateField()
+
+class IncomeForm(forms.ModelForm):
+
+    class Meta:
+        model = Income
+        fields = ['description', 'amount', 'date']
+        labels = {
+            'description': 'Paskirtis',
+            'amount': 'Suma',
+            'date': 'Data'
+        }
 
 
 
-class expenseForm(forms.Form):
-    Paskirtis = forms.CharField(max_length=255)
-    Suma = forms.DecimalField(max_digits=10, decimal_places=2)
-    Data = forms.DateField()
+class expenseForm(forms.ModelForm):
+    class Meta:
+        model = Expense
+        fields = ['description', 'amount', 'date']
+        labels = {
+            'description': 'Paskirtis',
+            'amount': 'Suma',
+            'date': 'Data'
+        }
 
 class FamilyCreationForm(forms.ModelForm):
     description = forms.CharField(max_length=255)

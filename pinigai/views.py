@@ -246,9 +246,9 @@ def add_income(request, family_id):
     if request.method == "POST":
         form = IncomeForm(request.POST)
         if form.is_valid():
-            Paskirtis = form.cleaned_data['Paskirtis']
-            Suma = form.cleaned_data['Suma']
-            Data = form.cleaned_data['Data']
+            description = form.cleaned_data['description']
+            amount = form.cleaned_data['amount']
+            date = form.cleaned_data['date']
 
             income = Income(user=request.user, family=family, description=description, amount=amount, date=date)
             income.save()
@@ -274,9 +274,9 @@ def add_expense(request, family_id):
     if request.method == "POST":
         form = expenseForm(request.POST)
         if form.is_valid():
-            Paskirtis = form.cleaned_data['Paskirtis']
-            Suma = form.cleaned_data['Suma']
-            Data = form.cleaned_data['Data']
+            description = form.cleaned_data['description']
+            amount = form.cleaned_data['amount']
+            date = form.cleaned_data['date']
 
             expense = Expense(user=request.user, family=family, description=description, amount=amount, date=date)
             expense.save()
