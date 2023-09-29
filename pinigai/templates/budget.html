@@ -10,11 +10,11 @@
     <p>Atsiprašome, bet atrodo, kad jūs nepriklauso jokiam fondui. Norėdami naudotis biudžeto funkcijomis, sukurti ar prisijungti prie fondo.</p>
   {% endif %}
 
-  <a href="{% url 'leave_family' family_id=family.id %}">Palikti fondaą:</a> {{ family.name }}
+  <a href="{% url 'leave_family' family_id=family.id %}">Palikti fondą:</a> {{ family.name }}
 
 
 <p>
-  <a href="{% url 'delete_family' family.id %}">Ištrinti fondaą:</a> {{ family.name }}
+  <a href="{% url 'delete_family' family.id %}">Ištrinti fondą:</a> {{ family.name }}
 </p>
 
 
@@ -31,13 +31,13 @@
 <a href="{% url 'add_user_to_family' family_id=family.id %}">Pridėti vartotoją į fondą</a>
 
 {% if family.balance %}
-  <h2>Fondo biudžeto balansas</h2>
+  <h2>Fondo balansas</h2>
   <p>Balansas: {{ family.balance }} EUR</p>
 {% else %}
-  <p>Nėra fondo biudžeto.</p>
+  <p>Fondas tuščias.</p>
 {% endif %}
 
-<h2>Fondo Pajamos:</h2>
+<h2>Fondo Inašos:</h2>
 <ul>
   {% for income in incomes %}
     <li>{{ income.user.username }} - {{ income.description }} + {{ income.amount }} EUR</li>
@@ -55,7 +55,7 @@
   {% endfor %}
 </ul>
 
-<a class="button" href="{% url 'add_income' family_id=family.id %}" class="btn btn-primary">Pajamos</a>
+<a class="button" href="{% url 'add_income' family_id=family.id %}" class="btn btn-primary">&nbsp;&nbsp;&nbsp;Inešti&nbsp;&nbsp;&nbsp;</a>
 <a class="button" href="{% url 'add_expense' family_id=family.id %}" class="btn btn-primary">Išlaidos</a>
 
 
