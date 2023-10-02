@@ -41,6 +41,7 @@
 <ul>
   {% for income in incomes %}
     <li>{{ income.user.username }} - {{ income.description }} + {{ income.amount }} EUR</li>
+    <p>{{ income.date }}</p>
   {% empty %}
     <li>Nėra įrašytų pajamų.</li>
   {% endfor %}
@@ -50,6 +51,7 @@
 <ul>
   {% for expense in expenses %}
     <li>{{ expense.user.username }} - {{ expense.description }} - {{ expense.amount }} EUR</li>
+    <p>{{ expense.date }}</p>
   {% empty %}
     <li>Nėra įrašytų išlaidų.</li>
   {% endfor %}

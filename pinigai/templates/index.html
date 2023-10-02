@@ -1,12 +1,63 @@
 {% extends 'base.html' %}
 
-{% block title%}Biudzetas{% endblock title %}
+{% block title%}Bendras Biudžetas{% endblock title %}
 
 {% block content %}
     <div class="container">
-        <p>Sveiki atvykę į mano puslapį!</p>
+        <p>Sveiki atvykę į internetinę programą!</p>
         <!-- Registracijos forma -->
-        <h2>Bendras Biudžetas</h2>
+
+<h2>Bendras Biudžetas</h2>
+
+<p>
+    "Bendras Biudžetas" yra internetinė programa, sukurta siekiant padėti vartotojams tvarkyti savo finansus
+    ir pasiekti tvarų biudžetą. Programa suteikia galimybę sekti išlaidas,
+    planuoti biudžetą, kategorizuoti finansinius įrašus ir stebėti pajamas bei išlaidas.
+    Ji leidžia vartotojams nustatyti finansinius tikslus, analizuoti finansinę veiklą.
+</p>
+
+<h2>Vartotojo Profilis ir Biudžeto Valdymas</h2>
+
+<p>
+    "Bendras Biudžetas" yra internetinė programa, kuri leidžia vartotojams kurti bendrus tikslus biudžetui,
+    valdyti savo profilį, stebėti finansinę informaciją ir atliktas operacijas su pinigais,
+    įskaitant pajamų pridėjimą ar išlaidų registravimą. Ji suteikia galimybę sekti,
+    kurie vartotojai įneša ar išleidžia pinigus, padedant išlaikyti aiškumą ir kontroliuoti biudžeto vykdymą.
+</p>
+
+<h2>Pradėkite Kelti Savo Finansinę Būklę į Naują Lygį</h2>
+
+<p>
+    "Bendras Biudžetas" – revoliucinė finansų valdymo internetinė programa,
+    kurioje jūsų finansinė sveikata ir tvarus biudžetas tampa realybe!
+    Ar svajojate apie geresnį finansinį ateitį? Mūsų programėlė suteikia jums įrankius,
+    kurių reikia siekiant įgyvendinti savo pinigų tikslus ir įgyti finansinę nepriklausomybę.
+</p>
+
+<p>
+    Kurkite bendrus tikslus kartu su draugais, šeima ar kolegomis.
+    Su "Bendras Biudžetas" galėsite kaupti pinigus dideliems svajonių projektams, kaip, pavyzdžiui, kelionėms,
+    būsto pirkimui arba ateities investicijoms. Bendrinkite ir siekite tikslų kartu, kad pasiektumėte daugiau!
+</p>
+
+<p>
+    Mūsų programoje turite galimybę valdyti savo vartotojo profilį – nuosekliai stebėti savo finansinius įnašus ir išlaidas,
+    redaguoti asmeninę informaciją ir prisitaikyti prie savo besikeičiančių poreikių. Tai yra jūsų finansų strategijos epicentras.
+</p>
+
+<p>
+    Taip pat siūlome paprastą ir efektyvų būdą kontroliuoti savo biudžetą.
+    Galėsite pridėti pajamas, kontroliuoti išlaidas ir sekti, kuris vartotojas pridėjo arba išleido pinigus.
+    Tai padės išlaikyti finansinę disipliną ir kontroliuoti pinigų srautą.
+</p>
+
+<p>
+    "Pagalvokite apie savo ateitį ir finansinį stabilumą.
+    "Bendras Biudžetas" suteikia jums galingus įrankius,
+    leidžiančius išlaisvinti kūrybingumą, realizuoti tikslus ir sukurti sėkmingą finansinį gyvenimą.
+    Pradėkite kelti savo finansinę būklę į naują lygį – prisijunkite prie "Bendras Biudžetas" bendruomenės jau šiandien!
+</p>
+
         {% if user.is_authenticated %}
         {% else %}
         <a href="{% url 'login' %}">Eiti į biudžeto puslapį tik prisijungus</a>
