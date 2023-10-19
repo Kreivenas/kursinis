@@ -10,6 +10,17 @@
     <li><strong>El. paštas:</strong> {{ user.email }}</li>
   </ul>
 
+<div>
+  <h3>Fondai, prie kurių priklauso:</h3>
+
+  <ul>
+    {% for family in user_families %}
+      <p><a href="{% url 'budget' family.id %}">{{ family.name }}</a></p>
+    {% endfor %}
+  </ul>
+
+</div>
+
   <div>
     <h3>Vartotojo nuotrauka</h3>
     <img src="{{ user.profile.photo.url }}" alt="Nuotrauka">

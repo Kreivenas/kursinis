@@ -23,7 +23,6 @@ def index(request):
     return render(request, 'index.html')
 
 def create_new_family(user, family_name):
-    # Įsitikinkite, kad jūsų Family modelis turi 'user' (daugiskaitos) atributą, ne 'user'
     family = Family.objects.create(name=family_name)
     family.user.add(user)  # Pridėkite vartotoją prie šeimos
     return family
@@ -33,7 +32,7 @@ def sign_up(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.username = user.username.upper()
+            user.username = user.username.title()
             user.save()
             messages.success(request, 'Atlikote sėkmingą registraciją.')
             login(request, user)
@@ -67,7 +66,6 @@ def sign_in(request):
                 messages.success(request,f'Labas {username.title()}, Malonu Tave Matyti!')
                 return redirect('profile')
 
-        # form is not valid or user is not authenticated
         messages.error(request,f'Neteisingas naudotojo vardas arba slaptažodis.')
         return render(request,'login.html',{'form': form})
 
@@ -98,7 +96,7 @@ def profile(request):
     context = {
         'u_form': u_form,
         'p_form': p_form,
-        'user_families': user_families  # Pridėjome user_families į kontekstą
+        'user_families': user_families
     }
 
     return render(request, 'profile.html', context=context)
@@ -107,15 +105,9 @@ def profile(request):
 @login_required
 def view_profile(request, user_id):
     user = get_object_or_404(User, id=user_id)
-    return render(request, 'profiles.html', {'user': user})
+    user_families = user.families.all()
+    return render(request, 'profiles.html', {'user': user, 'user_families': user_families})
 
-
-
-# @login_required
-# def family_page(request):
-#     return render(request, 'family.html')
-
-# logging.basicConfig(level=logging.INFO)
 
 
 @login_required
@@ -175,7 +167,7 @@ def budget_page(request, family_id):
     total_income_amount = incomes.aggregate(Sum('amount'))['amount__sum'] or 0
     total_expense_amount = expenses.aggregate(Sum('amount'))['amount__sum'] or 0
 
-    add_user_form = AddUserToFamilyForm()  # Sukurkite formą vartotojo pridėjimui į šeimą
+    add_user_form = AddUserToFamilyForm()
     users = family.users.all()
 
     return render(request, 'budget.html', {
@@ -226,9 +218,7 @@ def leave_family(request, family_id):
 def delete_family(request, family_id):
     family = get_object_or_404(Family, id=family_id)
 
-    # Patikrinkime, ar vartotojas priklauso šiai šeimai
     if request.user in family.users.all():
-        # Tik šeimos savininkas gali ištrinti šeimą
         if request.user == family.users.first():
             family.delete()
             messages.success(request, 'Fondas ištrinta sėkmingai.')
@@ -284,7 +274,6 @@ def add_expense(request, family_id):
             family.balance -= amount
             family.save()
 
-            # Nukreipiame į biudžeto puslapį su tinkama šeimos ID
             return redirect('budget', family_id=family_id)
 
     else:

@@ -21,6 +21,3 @@ urlpatterns = [
 
 
 
-    # path('family_form/', views.create_family, name='create_family_form'),
-    # path('family/', views.family_page, name='family_page'),
-
