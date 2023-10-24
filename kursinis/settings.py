@@ -27,7 +27,7 @@ ALLOWED_HOSTS = ['kreivenas.pythonanywhere.com', 'localhost', '127.0.0.1']
 SECRET_KEY = 'django-insecure-p0qm5zujef8svvb5a6ynk23nedw)!-w&n71v(x840@c-w1+0n$'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 
 # Application definition
@@ -125,7 +125,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-# STATIC_ROOT = '/home/Kreivenas/kursinis/static'
+STATIC_ROOT = '/home/Kreivenas/kursinis/static'
 
 STATIC_URL = '/static/'
 
