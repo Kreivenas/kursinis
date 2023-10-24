@@ -62,6 +62,9 @@ header {
     .media {
         display: block;
     }
+    .topnav{
+        size: 12px;
+    }
     .topnav a { display: block; text-align: center; }
     .topnav a.icon { display: block; }
     /*.topnav a:not(:first-child) { display: none; }*/
