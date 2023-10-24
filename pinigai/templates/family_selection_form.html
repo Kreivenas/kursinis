@@ -15,6 +15,7 @@
     {% csrf_token %}
     {{ form.selected_family }}
     {{ form.new_family_name }}
+    {{ form.expiration_date }}
     <button class="button" type="submit">Pasirinkite</button>
 </form>
 
@@ -23,7 +24,7 @@
 
   <ul>
     {% for family in user_families %}
-      <p><a href="{% url 'budget' family.id %}">{{ family.name }}</a></p>
+      <p><a href="{% url 'budget' family.id %}">{{ family.name }}</a>(Galiojimo data: {{ family.expiration_date|default:"Nėra" }})</p>
     {% endfor %}
   </ul>
 

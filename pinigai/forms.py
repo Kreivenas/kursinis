@@ -83,6 +83,10 @@ class FamilySelectionForm(forms.Form):
         required=False,
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Įveskite naujo fondo pavadinimą'}),
     )
+    expiration_date = forms.DateField(
+    required=False,
+    widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+    )
 
 class AddUserToFamilyForm(forms.Form):
     username = forms.CharField(label='Username')

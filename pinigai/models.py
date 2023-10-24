@@ -16,7 +16,7 @@ class CustomUserManager(BaseUserManager):
 class Family(models.Model):
     name = models.CharField(max_length=255, unique=True)
     users = models.ManyToManyField(User, related_name='families')
-    expiration_date = models.DateTimeField(default=datetime.now, blank=True)
+    expiration_date = models.DateTimeField(null=True, blank=True)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):

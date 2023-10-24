@@ -120,6 +120,7 @@ def select_family(request):
 
         if form.is_valid():
             selected_family = form.cleaned_data.get('selected_family')
+            expiration_date = form.cleaned_data.get('expiration_date')
 
             if selected_family:
                 try:
@@ -135,9 +136,8 @@ def select_family(request):
             if 'new_family_name' in form.cleaned_data:
                 new_family_name = form.cleaned_data['new_family_name']
                 try:
-                    new_family = Family.objects.create(name=new_family_name)
+                    new_family = Family.objects.create(name=new_family_name, expiration_date=expiration_date)
                     new_family.users.add(request.user)
-                    # Add the new family to the user's profile
                     request.user.families.add(new_family)
                     return redirect('profile')
                 except IntegrityError:
