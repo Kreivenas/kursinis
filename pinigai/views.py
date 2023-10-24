@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 from django.db.models import Sum
 from django.shortcuts import redirect
-from .forms import LoginForm, RegisterForm, AddUserToFamilyForm, FamilySelectionForm, UserUpdateForm, ProfileUpdateForm, IncomeForm, expenseForm, UserUpdateForm
+from .forms import LoginForm, RegisterForm, AddUserToFamilyForm, FamilyCreationForm, UserUpdateForm, ProfileUpdateForm, IncomeForm, expenseForm, UserUpdateForm
 from django.contrib.auth.decorators import login_required
 from .models import Profile, Income, Expense, Family
 from rest_framework import generics
@@ -116,40 +116,27 @@ def select_family(request):
     user_families = request.user.families.all()
 
     if request.method == 'POST':
-        form = FamilySelectionForm(request.POST)
+        form = FamilyCreationForm(request.POST)
 
         if form.is_valid():
-            selected_family = form.cleaned_data.get('selected_family')
+            name = form.cleaned_data.get('name')
             expiration_date = form.cleaned_data.get('expiration_date')
 
-            if selected_family:
+            if name:
                 try:
-                    family = Family.objects.get(name=selected_family.name)
-                    family.users.add(request.user)
-                    request.user.families.add(family)
-                    messages.success(request, 'Jūs priklausote pasirinktam fondui.')
+                    family = Family.objects.get(name=name)
+                    messages.error(request, 'Tokia šeima jau egzistuoja.')
                     return redirect('profile')
                 except Family.DoesNotExist:
-                    messages.error(request, 'Pasirinkta Fondas neegzistuoja.')
-                    return redirect('profile')
-
-            if 'new_family_name' in form.cleaned_data:
-                new_family_name = form.cleaned_data['new_family_name']
-                try:
-                    new_family = Family.objects.create(name=new_family_name, expiration_date=expiration_date)
+                    new_family = Family.objects.create(name=name, expiration_date=expiration_date)
                     new_family.users.add(request.user)
                     request.user.families.add(new_family)
-                    return redirect('profile')
-                except IntegrityError:
-                    messages.error(request, 'Tokis fondas jau egzistuoja.')
+                    messages.success(request, 'Sukurta nauja šeima.')
                     return redirect('profile')
     else:
-        form = FamilySelectionForm()
+        form = FamilyCreationForm()
 
     return render(request, 'family_selection_form.html', {'form': form, 'new_family': new_family, 'user_families': user_families})
-
-
-
 
 
 @login_required

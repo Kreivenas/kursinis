@@ -66,10 +66,17 @@ class expenseForm(forms.ModelForm):
         }
 
 class FamilyCreationForm(forms.ModelForm):
-    description = forms.CharField(max_length=255)
     class Meta:
         model = Family
-        fields = ['name', 'users' ]
+        fields = ['name', 'expiration_date']
+        labels = {
+            'name': 'Fondo pavadinimas',
+            'expiration_date': 'Galiojimo data'
+        }
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Įveskite fondo pavadinimą'}),
+            'expiration_date': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Pasirinkite galiojimo datą: yyyy/mm/dd'})
+        }
 
 class FamilySelectionForm(forms.Form):
     # selected_family = forms.ModelChoiceField(
