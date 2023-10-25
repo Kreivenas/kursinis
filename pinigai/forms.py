@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import Profile, Family, Income, Expense
 from django import forms
 from django.contrib.auth.models import User
+from django.utils import timezone
+
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=65)
@@ -77,6 +79,12 @@ class FamilyCreationForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Įveskite fondo pavadinimą'}),
             'expiration_date': forms.DateInput(attrs={'class': 'form-control', 'placeholder': 'Pasirinkite galiojimo datą: yyyy/mm/dd'})
         }
+
+        def clean_expiration_date(self):
+            expiration_date = self.cleaned_data.get('expiration_date')
+            if expiration_date <= timezone.now().date():
+                raise forms.ValidationError('Galiojimo data turi būti ateityje.')
+            return expiration_date
 
 class FamilySelectionForm(forms.Form):
     # selected_family = forms.ModelChoiceField(
