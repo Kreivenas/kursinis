@@ -7,3 +7,10 @@ class PinigaiConfig(AppConfig):
 
     def ready(self):
         from .signals import create_profile, save_profile
+
+class FamilyConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'family'
+
+    def ready(self):
+        import signals        
