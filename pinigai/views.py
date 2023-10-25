@@ -125,13 +125,13 @@ def select_family(request):
             if name:
                 try:
                     family = Family.objects.get(name=name)
-                    messages.error(request, 'Tokia šeima jau egzistuoja.')
+                    messages.error(request, 'Tokis fondas jau egzistuoja.')
                     return redirect('profile')
                 except Family.DoesNotExist:
                     new_family = Family.objects.create(name=name, expiration_date=expiration_date)
                     new_family.users.add(request.user)
                     request.user.families.add(new_family)
-                    messages.success(request, 'Sukurta nauja šeima.')
+                    messages.success(request, 'Sukurta naujas fondas.')
                     return redirect('profile')
     else:
         form = FamilyCreationForm()
