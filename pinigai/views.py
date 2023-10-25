@@ -22,10 +22,10 @@ from django.db import IntegrityError
 def index(request):
     return render(request, 'index.html')
 
-def create_new_family(user, family_name):
-    family = Family.objects.create(name=family_name)
-    family.user.add(user)  # Pridėkite vartotoją prie šeimos
-    return family
+# def create_new_family(user, family_name):
+#     family = Family.objects.create(name=family_name)
+#     family.user.add(user)  # Pridėkite vartotoją prie šeimos
+#     return family
 
 def sign_up(request):
     if request.method == 'POST':

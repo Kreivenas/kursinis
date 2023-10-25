@@ -5,6 +5,8 @@ from PIL import Image
 from django.conf import settings
 from datetime import datetime
 from django.utils import timezone
+from django.core.validators import MinValueValidator
+
 
 
 
@@ -16,7 +18,7 @@ class CustomUserManager(BaseUserManager):
 class Family(models.Model):
     name = models.CharField(max_length=255, unique=True)
     users = models.ManyToManyField(User, related_name='families')
-    expiration_date = models.DateTimeField(null=True, blank=True)
+    expiration_date = models.DateField(validators=[MinValueValidator(limit_value=timezone.now().date())])
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):

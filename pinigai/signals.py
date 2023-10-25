@@ -16,7 +16,7 @@ def save_profile(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Family)
 def check_family_expiration_date(sender, instance, **kwargs):
-    from tasks import delete_expired_families
+    from pinigai.tasks import delete_expired_families
     if instance.expiration_date:
         # Tikriname, ar expiration_date yra nustatytas
         delete_expired_families()

@@ -9,8 +9,16 @@
 </p>
 
 {% if form.errors %}
-    <p style="color: red;">Formos klaida. Patikrinkite pasirinkimą.</p>
+    <p style="color: red;">Formoje yra klaidų:</p>
+    <ul>
+        {% for field in form %}
+            {% for error in field.errors %}
+                <li>{{ field.label_tag }}: {{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
 {% endif %}
+
 <form method="POST" class="button" action="{% url 'select_family' %}">
     {% csrf_token %}
     {{ form.name.label_tag }}
