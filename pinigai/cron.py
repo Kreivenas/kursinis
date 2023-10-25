@@ -1,12 +1,12 @@
 from django_cron import CronJobBase, Schedule
-from pinigai.models import Family 
+from models import Family 
 from django.utils import timezone
 
 
 class DeleteExpiredFamilies(CronJobBase):
     RUN_EVERY_MINS = 60 * 24
 
-    schedule = Schedule(run_every_mins=RUN_EVERY_MINS, at="01:48")
+    schedule = Schedule(run_every_mins=RUN_EVERY_MINS, at="00:00")
     code = 'pinigai.delete_expired_families'
 
     def do(self):
